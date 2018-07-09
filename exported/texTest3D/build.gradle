@@ -37,9 +37,9 @@ android {
 	}
 	signingConfigs { release {
 		storeFile file('B:/DroneCode/texTestAdnroid/texTest3D/user.keystore')
-		storePassword 'qwerty12345'
+		storePassword ''
 		keyAlias 'textest3d'
-		keyPassword 'qwerty12345'
+		keyPassword ''
 	} }
 
 	buildTypes {

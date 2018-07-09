@@ -26,6 +26,7 @@ public class cameraPIP : MonoBehaviour
     public Button droneLeft;
     public Button droneRight;
     public Button stopControl;
+    public Button locationButton;
 
     // flight controll values
     public Button yawPlus;
@@ -79,6 +80,8 @@ public class cameraPIP : MonoBehaviour
 
     // Joystick Buttons
     private string[] buttons = new string[] { "A", "B", "X", "Y", "R1", "R2", "L1", "L2", "L3", "R3", "START", "BACK" };
+    private float maxYaw, maxThrottle, maxPitch, maxRoll;
+    private bool controlEnabled;
 
     // Display positions
     private Vector3 defaultPos;
@@ -111,6 +114,7 @@ public class cameraPIP : MonoBehaviour
         showToast.onClick.AddListener(toast);
         takeOffBtn.onClick.AddListener(takeOff);
         landBtn.onClick.AddListener(land);
+        controlEnabled = false;
         enableVirtualControl.onClick.AddListener(enableVirtualSticks);
         //yawRight.onClick.AddListener(StartYaw);
         stopControl.onClick.AddListener(disableVirtualSticks);
@@ -118,6 +122,10 @@ public class cameraPIP : MonoBehaviour
         stopFollowButton.onClick.AddListener(stopFollowMe);
 
         // flight controll values
+        maxYaw = 90f;
+        maxThrottle = 2;
+        maxPitch = 2;
+        maxRoll = 2;
         yaw = 0;
         pitch = 0;
         roll = 0;
@@ -130,7 +138,7 @@ public class cameraPIP : MonoBehaviour
         pitchMinus.onClick.AddListener(pitchDown);
         throttlePlus.onClick.AddListener(throttleUp);
         throttleMinus.onClick.AddListener(throttleDown);
-
+        locationButton.onClick.AddListener(startLocation);
         //#######################
         lastFrame = Time.time;
         on = Drone_video_btn.colors;
@@ -197,13 +205,7 @@ public class cameraPIP : MonoBehaviour
 
     void toast()
     {
-        using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-        {
-            using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
-            {
-                obj_Activity.Call("showToast", "Button Clicked in Unity");
-            }
-        }
+        callVoidDroneFunc("showToast", new object[] { "Button Clicked in Unity" }); 
     }
 
     void updateText()
@@ -223,13 +225,7 @@ public class cameraPIP : MonoBehaviour
 
     void startDroneFunc()
     {
-        using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-        {
-            using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
-            {
-                obj_Activity.Call("setupDroneConnection");
-            }
-        }
+         callVoidDroneFunc("setupDroneConnection");
     }
 
     void updateDisplay()
@@ -243,7 +239,6 @@ public class cameraPIP : MonoBehaviour
                 {
                     using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
                     {
-
                         byte[] t = obj_Activity.Call<byte[]>("getVid");
                         if (null != t)
                         {
@@ -301,16 +296,6 @@ public class cameraPIP : MonoBehaviour
         }
     }
 
-    /*void StartYaw()
-    {
-        callVoidDroneFunc("startSendingControl");
-    }
-
-    void stopYaw()
-    {
-        callVoidDroneFunc("stopYaw");    
-    }*/
-
     void startFollowMe()
     {
         callVoidDroneFunc("followMeStart");
@@ -321,14 +306,19 @@ public class cameraPIP : MonoBehaviour
         callVoidDroneFunc("followMeStop");
     }
 
-
+    void startLocation()
+    {
+        callVoidDroneFunc("startLocationService");
+    }
 
     void enableVirtualSticks()
     {
+        controlEnabled = true;
         callVoidDroneFunc("setVirtualControlActive", new object[] { true });
     }
     void disableVirtualSticks()
     {
+        controlEnabled = false;
         callVoidDroneFunc("setVirtualControlActive", new object[] { false });
     }
 
@@ -358,13 +348,13 @@ public class cameraPIP : MonoBehaviour
 
     void yawUp()
     {
-        yaw += 1;
+        yaw += 10;
         yawValue.text = yaw.ToString();
         callVoidDroneFunc("setYaw", new object[] { yaw });
     }
     void yawDown()
     {
-        yaw -= 1;
+        yaw -= 10;
         yawValue.text = yaw.ToString();
         callVoidDroneFunc("setYaw", new object[] { yaw });
     }
@@ -433,6 +423,58 @@ public class cameraPIP : MonoBehaviour
         buttonText.text += Mathf.Abs(RJH) >= 0.1f ? "RJH: " + RJH.ToString() : "";
         buttonText.text += Mathf.Abs(DPH) >= 0.1f ? "DPH: " + DPH.ToString() : "";
         buttonText.text += Mathf.Abs(DPV) >= 0.1f ? "DPV: " + DPV.ToString() : "";
+
+        if( controlEnabled)
+        {
+            if (Mathf.Abs(RJV) >= 0.1f)
+            {
+                throttle = maxThrottle * -RJV;
+                throttleValue.text = throttle.ToString();
+                callVoidDroneFunc("setThrottle", new object[] { throttle });
+            }
+            else
+            {
+                throttle = 0;
+                throttleValue.text = throttle.ToString();
+                callVoidDroneFunc("setThrottle", new object[] { throttle });
+            }
+            if (Mathf.Abs(RJH) >= 0.1f)
+            {
+                yaw = maxYaw * RJH;
+                yawValue.text = yaw.ToString();
+                callVoidDroneFunc("setYaw", new object[] { yaw });
+            }
+            else
+            {
+                yaw = 0;
+                yawValue.text = yaw.ToString();
+                callVoidDroneFunc("setYaw", new object[] { yaw });
+            }
+            if (Mathf.Abs(LJV) >= 0.1f)
+            {
+                pitch = LJV * maxPitch;
+                pitchValue.text = pitch.ToString(); 
+                callVoidDroneFunc("setPitch", new object[] { pitch });
+            }
+            else
+            {
+                pitch = 0;
+                pitchValue.text = pitch.ToString();
+                callVoidDroneFunc("setPitch", new object[] { pitch });
+            }
+            if (Mathf.Abs(LJH) >= 0.1f)
+            {
+                roll = maxRoll * -LJH;
+                rollValue.text = roll.ToString();
+                callVoidDroneFunc("setRoll", new object[] { roll });
+            }
+            else
+            {
+                roll = 0;
+                rollValue.text = roll.ToString();
+                callVoidDroneFunc("setRoll", new object[] { roll });
+            }
+        }
         
     }
 
