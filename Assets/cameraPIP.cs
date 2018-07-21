@@ -11,20 +11,20 @@ public class cameraPIP : MonoBehaviour
     public Button startBtn;
     public Button Drone_video_btn;
     public Button Phone_video_btn;
-    public Button showToast;
+    //public Button showToast;
     public Button startDrone;
     public Button takeOffBtn;
     public Button landBtn;
     public Button enableCam;
     public Button enableVirtualControl;
-    public Button yawRight;
-    public Button yawLeft;
-    public Button droneUp;
-    public Button droneDown;
-    public Button droneAhead;
-    public Button droneBack;
-    public Button droneLeft;
-    public Button droneRight;
+    //public Button yawRight;
+    //public Button yawLeft;
+    //public Button droneUp;
+    //public Button droneDown;
+    //public Button droneAhead;
+    //public Button droneBack;
+    //public Button droneLeft;
+    //public Button droneRight;
     public Button stopControl;
     public Button locationButton;
 
@@ -52,13 +52,14 @@ public class cameraPIP : MonoBehaviour
     public Button followMeButton;
     public Button stopFollowButton;
     public Text locationText;
+    public Text distanceText;
 
     //public Button startYawBtn;
     //public Button stopYawBtn;
     public GameObject left_display;
     public GameObject right_display;
-    public GameObject left_pip_display;
-    public GameObject right_pip_display;
+    //public GameObject left_pip_display;
+    //public GameObject right_pip_display;
     public Text connection_status;
     public Text connected_hardware;
     public Text flight_controller_status;
@@ -70,6 +71,9 @@ public class cameraPIP : MonoBehaviour
     private bool frame_ready_flag;
     private bool drone_camera_flag;
     private bool phone_camera_flag;
+    private bool calc_distance_flag;
+
+    private Double[] baseLoc;
 
     // Drone Camera
     private Texture2D tex2d;
@@ -102,6 +106,7 @@ public class cameraPIP : MonoBehaviour
         frame_ready_flag = false;
         drone_camera_flag = false;
         phone_camera_flag = false;
+        calc_distance_flag = false;
         defaultPos = new Vector3(-236, -283, 0);
         defaultScale = new Vector3(926, 768, 1);
         viewcale = new Vector3(1270, 1050, 1);
@@ -111,7 +116,7 @@ public class cameraPIP : MonoBehaviour
         Drone_video_btn.onClick.AddListener(toggle_drone_cam);
         Phone_video_btn.onClick.AddListener(toggle_phone_cam);
         startDrone.onClick.AddListener(startDroneFunc);
-        showToast.onClick.AddListener(toast);
+        //showToast.onClick.AddListener(toast);
         takeOffBtn.onClick.AddListener(takeOff);
         landBtn.onClick.AddListener(land);
         controlEnabled = false;
@@ -262,14 +267,17 @@ public class cameraPIP : MonoBehaviour
         if ( phone_camera_flag )
         {
             if (webTex.isPlaying == false) { webTex.Play(); }
-            left_pip_display.GetComponent<Renderer>().material.mainTexture = webTex;
-            right_pip_display.GetComponent<Renderer>().material.mainTexture = webTex;
+            left_display.GetComponent<Renderer>().material.mainTexture = webTex;
+            right_display.GetComponent<Renderer>().material.mainTexture = webTex;
         }
         else
         {
-            webTex.Stop();
-            left_pip_display.GetComponent<Renderer>().material.mainTexture = noVideo;
-            right_pip_display.GetComponent<Renderer>().material.mainTexture = noVideo;
+            if(null != webTex)
+            {
+                webTex.Stop();
+            }
+            left_display.GetComponent<Renderer>().material.mainTexture = noVideo;
+            right_display.GetComponent<Renderer>().material.mainTexture = noVideo;
         }
     }
 
@@ -478,9 +486,39 @@ public class cameraPIP : MonoBehaviour
         
     }
 
-    void setLocationText(String text)
+    // Haversine formula
+    // https://en.wikipedia.org/wiki/Haversine_formula
+    // The haversine formula determines the great-circle distance between two points on a sphere given their longitudes and latitudes.
+    double calculate_distance(double lat1, double lon1, double lat2, double lon2)
+    {  // generally used geo measurement function
+        double R = 6378.137f; // Radius of earth in KM
+        double dLat = lat2 * Math.PI / 180 - lat1 * Math.PI / 180;
+        double dLon = lon2 * Math.PI / 180 - lon1 * Math.PI / 180;
+        double a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+        Math.Cos(lat1 * Math.PI / 180) * Math.Cos(lat2 * Math.PI / 180) *
+        Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+        double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+        double d = R * c;
+        return d * 1000; // meters
+    }
+
+    void locationUpdate(String data)
     {
-        locationText.text = text;
+        Debug.Log("LOCATION");
+        Double[] loc;
+        using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+        {
+            using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+            {
+                loc = obj_Activity.Call<Double[]>("getLocation");
+            }
+        }
+        if(null == baseLoc)
+        {
+            baseLoc = loc;
+        }
+        locationText.text = loc[0].ToString() + " " + loc[1].ToString();
+        distanceText.text = "Distance: " +  calculate_distance(baseLoc[0], baseLoc[1], loc[0], loc[1]).ToString();
     }
 
     // Update is called once per frame
