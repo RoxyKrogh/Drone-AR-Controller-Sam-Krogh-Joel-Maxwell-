@@ -15,7 +15,7 @@ public class cameraPIP : MonoBehaviour
     public Button startDrone;
     public Button takeOffBtn;
     public Button landBtn;
-    public Button enableCam;
+    //public Button enableCam;
     public Button enableVirtualControl;
     //public Button yawRight;
     //public Button yawLeft;
@@ -27,6 +27,9 @@ public class cameraPIP : MonoBehaviour
     //public Button droneRight;
     public Button stopControl;
     public Button locationButton;
+    public Button swapDisplays;
+    public RenderTexture droneView;
+    public RenderTexture phoneView;
 
     // flight controll values
     public Button yawPlus;
@@ -54,10 +57,16 @@ public class cameraPIP : MonoBehaviour
     public Text locationText;
     public Text distanceText;
 
+    
+
     //public Button startYawBtn;
     //public Button stopYawBtn;
     public GameObject left_display;
     public GameObject right_display;
+    public GameObject droneDisplay;
+    public GameObject phoneDisplay;
+    public GameObject phoneHolder;
+    public GameObject droneHolder;
     //public GameObject left_pip_display;
     //public GameObject right_pip_display;
     public Text connection_status;
@@ -72,8 +81,10 @@ public class cameraPIP : MonoBehaviour
     private bool drone_camera_flag;
     private bool phone_camera_flag;
     private bool calc_distance_flag;
-
+    private bool droneRender;
     private Double[] baseLoc;
+    private Double[] phoneLoc;
+    private Double[] droneLoc;
 
     // Drone Camera
     private Texture2D tex2d;
@@ -98,9 +109,14 @@ public class cameraPIP : MonoBehaviour
     private ColorBlock on;
     private ColorBlock off;
 
+    
+    public Button testButton;
     // Use this for initialization
     void Start()
     {
+
+
+        testButton.onClick.AddListener(setStartPos);
         update_display_flag = true;
         update_status_flag = false;
         frame_ready_flag = false;
@@ -126,6 +142,8 @@ public class cameraPIP : MonoBehaviour
         followMeButton.onClick.AddListener(startFollowMe);
         stopFollowButton.onClick.AddListener(stopFollowMe);
 
+        swapDisplays.onClick.AddListener(swap);
+        droneRender = false;
         // flight controll values
         maxYaw = 90f;
         maxThrottle = 2;
@@ -156,6 +174,11 @@ public class cameraPIP : MonoBehaviour
         webTex.Stop(); // just to be safe
     }
 
+    void setStartPos()
+    {
+        phoneLoc = null;
+    }
+
     void update_status_toggle()
     {
         if (update_status_flag)
@@ -177,12 +200,12 @@ public class cameraPIP : MonoBehaviour
         if (drone_camera_flag)
         {
             drone_camera_flag = false;
-            Drone_video_btn.colors = off;
+            Drone_video_btn.colors = on;
         }
         else
         {
             drone_camera_flag = true;
-            Drone_video_btn.colors = on;
+            Drone_video_btn.colors = off;
         }
     }
 
@@ -202,9 +225,30 @@ public class cameraPIP : MonoBehaviour
 
     void set_frame_ready(string message)
     {
+        Debug.Log("FRAME READY");
         if (message == "true")
         {
             frame_ready_flag = true;
+        }
+    }
+
+    void swap()
+    {
+        droneRender = !droneRender;
+
+        if (droneRender)
+        {
+            droneDisplay.GetComponent<Renderer>().enabled = true;
+            left_display.GetComponent<Renderer>().material.mainTexture = droneView;
+            right_display.GetComponent<Renderer>().material.mainTexture = droneView;
+            phoneDisplay.GetComponent<Renderer>().enabled = false;
+        }
+        else
+        {
+            phoneDisplay.GetComponent<Renderer>().enabled = true;
+            left_display.GetComponent<Renderer>().material.mainTexture = phoneView;
+            right_display.GetComponent<Renderer>().material.mainTexture = phoneView;
+            droneDisplay.GetComponent<Renderer>().enabled = false;
         }
     }
 
@@ -237,8 +281,10 @@ public class cameraPIP : MonoBehaviour
     {
         if (drone_camera_flag )
         {
+            Debug.Log("Drone Camera");
             if (frame_ready_flag)
             {
+                Debug.Log("Frame Ready");
                 frame_ready_flag = false;
                 using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
                 {
@@ -249,8 +295,8 @@ public class cameraPIP : MonoBehaviour
                         {
                             tex2d.LoadImage(t);
                             tex2d.Apply();
-                            left_display.GetComponent<Renderer>().material.mainTexture = tex2d;
-                            right_display.GetComponent<Renderer>().material.mainTexture = tex2d;
+                            droneDisplay.GetComponent<Renderer>().material.mainTexture = tex2d;
+                            //right_display.GetComponent<Renderer>().material.mainTexture = tex2d;
                             fps_display.text = "" + Math.Round(1 / (Time.time - lastFrame), 2) + "fps";
                             lastFrame = Time.time;
                         }
@@ -261,14 +307,13 @@ public class cameraPIP : MonoBehaviour
         }
         else
         {
-            left_display.GetComponent<Renderer>().material.mainTexture = noVideo;
-            right_display.GetComponent<Renderer>().material.mainTexture = noVideo;
+            droneDisplay.GetComponent<Renderer>().material.mainTexture = noVideo;
         }
         if ( phone_camera_flag )
         {
             if (webTex.isPlaying == false) { webTex.Play(); }
-            left_display.GetComponent<Renderer>().material.mainTexture = webTex;
-            right_display.GetComponent<Renderer>().material.mainTexture = webTex;
+            phoneDisplay.GetComponent<Renderer>().material.mainTexture = webTex;
+            //right_display.GetComponent<Renderer>().material.mainTexture = webTex;
         }
         else
         {
@@ -276,8 +321,8 @@ public class cameraPIP : MonoBehaviour
             {
                 webTex.Stop();
             }
-            left_display.GetComponent<Renderer>().material.mainTexture = noVideo;
-            right_display.GetComponent<Renderer>().material.mainTexture = noVideo;
+            phoneDisplay.GetComponent<Renderer>().material.mainTexture = noVideo;
+            //right_display.GetComponent<Renderer>().material.mainTexture = noVideo;
         }
     }
 
@@ -482,6 +527,31 @@ public class cameraPIP : MonoBehaviour
                 rollValue.text = roll.ToString();
                 callVoidDroneFunc("setRoll", new object[] { roll });
             }
+            if(Input.GetButton("L2") && Input.GetButton("R2")){
+                if (Input.GetButtonDown("Y"))
+                {
+                    Debug.Log("take off buttons!");
+                    callVoidDroneFunc("takeOff");
+                }
+                if (Input.GetButtonDown("A"))
+                {
+                    Debug.Log("Landing buttons!");
+                    callVoidDroneFunc("land");
+                }
+            }
+
+            if (!Input.GetButton("L1") && Input.GetButton("R1"))
+            {
+                Debug.Log("Gimbal down");
+                callVoidDroneFunc("adjustGimbalRotation", new object[] {-90f, 0f});
+            }
+
+            if (Input.GetButton("L1") && !Input.GetButton("R1"))
+            {
+                Debug.Log("Gimbal up");
+                callVoidDroneFunc("adjustGimbalRotation", new object[] {0f, 0f});
+            }
+
         }
         
     }
@@ -502,23 +572,76 @@ public class cameraPIP : MonoBehaviour
         return d * 1000; // meters
     }
 
+
+
+    public static double DegreeBearing(double lat1, double lon1, double lat2, double lon2)
+    {
+        Double dLon = ToRadians(lon2 - lon1);
+        Double dPhi = Math.Log(
+            Math.Tan(ToRadians(lat2) / 2 + Math.PI / 4) / Math.Tan(ToRadians(lat1) / 2 + Math.PI / 4));
+        if (Math.Abs(dLon) > Math.PI)
+            dLon = dLon > 0 ? -(2 * Math.PI - dLon) : (2 * Math.PI + dLon);
+        return ToBearing(Math.Atan2(dLon, dPhi));
+    }
+
+    public static double ToRadians(double degrees)
+    {
+        return degrees * (Math.PI / 180);
+    }
+
+    public static double ToDegrees(double radians)
+    {
+        return radians * 180 / Math.PI;
+    }
+
+    public static double ToBearing(double radians)
+    {
+        // convert radians to degrees (as bearing: 0...360)
+        return (ToDegrees(radians) + 360) % 360;
+    }
+
+
+    // parameter data is not used.  UnityPlayer injection funtion requires a string parmeter
     void locationUpdate(String data)
     {
         Debug.Log("LOCATION");
         Double[] loc;
+        Double[] dLoc;
         using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
         {
             using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
             {
-                loc = obj_Activity.Call<Double[]>("getLocation");
+                loc = obj_Activity.Call<Double[]>("getPhoneLocation");
+                dLoc = obj_Activity.Call<Double[]>("getDroneLocation");
+                
             }
         }
         if(null == baseLoc)
         {
             baseLoc = loc;
         }
-        locationText.text = loc[0].ToString() + " " + loc[1].ToString();
-        distanceText.text = "Distance: " +  calculate_distance(baseLoc[0], baseLoc[1], loc[0], loc[1]).ToString();
+        if( null == phoneLoc)
+        {
+            phoneLoc = loc;
+        }
+        if (null == droneLoc)
+        {
+            droneLoc = dLoc;
+        }
+        
+
+
+        if (null != loc && null != dLoc)
+        {
+            baseLoc = loc;
+            //locationText.text = "Location: "+ loc[0].ToString() + " " + loc[1].ToString() + "|| " + dLoc[0].ToString() + " " + dLoc[1].ToString() + " " + dLoc[2].ToString();
+            locationText.text = "Distance: lat:" + ((phoneLoc[0] - loc[0]) * 1000000).ToString() + " \nlon: " + ((phoneLoc[1] - loc[1]) * 1000000).ToString() + "\nStartLoc: " + phoneLoc[0] + " " + phoneLoc[1];
+            //phoneHolder.transform.position = new Vector3(0, 0, 0);
+            Vector3 translate = new Vector3((float)((phoneLoc[0] - loc[0]) * 1000000), 0, (float)((phoneLoc[1] - loc[1]) * 1000000));
+            distanceText.text = "Vector: " + translate.ToString("G6");
+            phoneHolder.transform.position = translate;
+            distanceText.text += "\nTransform: " + phoneHolder.transform.position.ToString("G6");
+        }      
     }
 
     // Update is called once per frame
