@@ -76,12 +76,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\cameraPIP.cs" />
+    <Compile Include="Assets\MazeItems\Standard Assets\Environment\Water (Basic)\Scripts\WaterBasic.cs" />
     <Compile Include="Assets\cameraSwap.cs" />
+    <Compile Include="Assets\droneCameraPlaneControl.cs" />
+    <Compile Include="Assets\droneControl.cs" />
+    <Compile Include="Assets\droneMaze.cs" />
     <Compile Include="Assets\phoneCam.cs" />
-    <Compile Include="Assets\playerCameraControl.cs" />
     <Compile Include="Assets\pointNorth.cs" />
+    <Compile Include="Assets\setupScreenScript.cs" />
     <Compile Include="Assets\show_hide_controls.cs" />
+    <Compile Include="Assets\startScreenScript.cs" />
     <Compile Include="Assets\tangoFiles\Google-Unity\Scripts\AndroidHelper.cs" />
     <Compile Include="Assets\tangoFiles\Google-Unity\Scripts\AndroidLifecycle.cs" />
     <Compile Include="Assets\tangoFiles\TangoPrefabs\Deprecated\TangoARPoseController.cs" />
@@ -177,11 +181,13 @@
     <Compile Include="Assets\tangoFiles\TangoSDK\TangoUX\Scripts\Interfaces\ITangoUXMultithreaded.cs" />
     <Compile Include="Assets\tangoFiles\TangoSDK\TangoUX\Scripts\Listeners\UxExceptionEventListener.cs" />
     <Compile Include="Assets\tangoFiles\TangoSDK\TangoUX\Scripts\TangoUx.cs" />
+    <Compile Include="Assets\treasureBoxScript.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\NewSurfaceShader.shader" />
-    <None Include="Assets\clearObjectShader.shader" />
-    <None Include="Assets\shadowDraw.shader" />
+    <None Include="Assets\MazeItems\Standard Assets\Environment\Water (Basic)\Shaders\FXWaterBasic.shader" />
+    <None Include="Assets\Shaders\NewSurfaceShader.shader" />
+    <None Include="Assets\Shaders\clearObjectShader.shader" />
+    <None Include="Assets\Shaders\shadowDraw.shader" />
     <None Include="Assets\tangoFiles\Plugins\Android\AndroidManifest.xml" />
     <None Include="Assets\tangoFiles\TangoPrefabs\Shaders\ARPostProcess.shader" />
     <None Include="Assets\tangoFiles\TangoPrefabs\Shaders\PointCloud.shader" />

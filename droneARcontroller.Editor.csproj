@@ -135,9 +135,10 @@
     <Compile Include="Assets\tangoFiles\TangoSDK\Examples\Common\Scripts\Editor\TangoDynamicMeshInspector.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\NewSurfaceShader.shader" />
-    <None Include="Assets\clearObjectShader.shader" />
-    <None Include="Assets\shadowDraw.shader" />
+    <None Include="Assets\MazeItems\Standard Assets\Environment\Water (Basic)\Shaders\FXWaterBasic.shader" />
+    <None Include="Assets\Shaders\NewSurfaceShader.shader" />
+    <None Include="Assets\Shaders\clearObjectShader.shader" />
+    <None Include="Assets\Shaders\shadowDraw.shader" />
     <None Include="Assets\tangoFiles\Plugins\Android\AndroidManifest.xml" />
     <None Include="Assets\tangoFiles\TangoPrefabs\Shaders\ARPostProcess.shader" />
     <None Include="Assets\tangoFiles\TangoPrefabs\Shaders\PointCloud.shader" />
