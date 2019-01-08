@@ -137,6 +137,7 @@ public class droneMaze : MonoBehaviour
         webTex.Stop(); // just to be safe
         drone_camera_flag = true;
         getAppContext().Call("enableVideo");
+        enableVirtualSticks();
     }
 
     void setStartPos()
@@ -259,7 +260,6 @@ public class droneMaze : MonoBehaviour
                     tex2d.LoadImage(t);
                     tex2d.Apply();
                     droneDisplay.GetComponent<Renderer>().material.mainTexture = tex2d;
-                    //right_display.GetComponent<Renderer>().material.mainTexture = tex2d;
                     fps_display.text = "" + Math.Round(1 / (Time.time - lastFrame), 2) + "fps";
                     lastFrame = Time.time;
                 }
@@ -290,7 +290,6 @@ public class droneMaze : MonoBehaviour
     void takeOff()
     {
          callVoidDroneFunc("takeOff");
-
     }
 
     void land()
@@ -318,6 +317,7 @@ public class droneMaze : MonoBehaviour
         controlEnabled = true;
         callVoidDroneFunc("setVirtualControlActive", new object[] { true });
     }
+
     void disableVirtualSticks()
     {
         controlEnabled = false;
@@ -594,20 +594,6 @@ public class droneMaze : MonoBehaviour
         {
             droneLoc = dLoc;
         }
-        
-
-
-        /*if (null != loc && null != dLoc)
-        {
-            baseLoc = loc;
-            //locationText.text = "Location: "+ loc[0].ToString() + " " + loc[1].ToString() + "|| " + dLoc[0].ToString() + " " + dLoc[1].ToString() + " " + dLoc[2].ToString();
-            locationText.text = "Distance: lat:" + ((phoneLoc[0] - loc[0]) * 1000000).ToString() + " \nlon: " + ((phoneLoc[1] - loc[1]) * 1000000).ToString() + "\nStartLoc: " + phoneLoc[0] + " " + phoneLoc[1];
-            //phoneHolder.transform.position = new Vector3(0, 0, 0);
-            Vector3 translate = new Vector3((float)((phoneLoc[0] - loc[0]) * 1000000), 0, (float)((phoneLoc[1] - loc[1]) * 1000000));
-            distanceText.text = "Vector: " + translate.ToString("G6");
-            phoneHolder.transform.position = translate;
-            distanceText.text += "\nTransform: " + phoneHolder.transform.position.ToString("G6");
-        } */     
     }
 
     // Update is called once per frame
