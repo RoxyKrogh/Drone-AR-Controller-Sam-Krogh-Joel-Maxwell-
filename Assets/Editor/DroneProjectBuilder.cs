@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 #if UNITY_EDITOR
 using UnityEditor;
 
@@ -9,6 +11,7 @@ public class DroneProjectBuilder : EditorWindow {
 
     const string OPERATION_TITLE = "Build with DJI integration";
     [SerializeField] private string androidProjectPath = "";
+    [SerializeField] private string androidSdkPath = "";
 
     [MenuItem("Drone/" + OPERATION_TITLE)]
     static void Init()
@@ -49,15 +52,41 @@ public class DroneProjectBuilder : EditorWindow {
         EditorGUILayout.LabelField("Next, find the Embedded Unity Drone Control project: ", EditorStyles.wordWrappedLabel);
         string apPath = GUILayout.TextField(this.androidProjectPath);
         EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button("Browse your file system")) apPath = EditorUtility.OpenFolderPanel("Embedded Unity Drone Control project root", apPath, "");
-        EditorGUILayout.LabelField(" or ", GUILayout.Width(25.0f));
+        if (GUILayout.Button("Browse file system")) apPath = EditorUtility.OpenFolderPanel("Embedded Unity Drone Control project root", apPath, "");
         if (GUILayout.Button("Download from GitHub")) Application.OpenURL("https://github.com/SamKrogh/Embedded-Unity-Drone-Control-Tango-Version-");
         EditorGUILayout.EndHorizontal();
         this.androidProjectPath = apPath;
         GUILayout.Space(20);
 
+        EditorGUILayout.LabelField("Next, find the Android SDK Tools: ", EditorStyles.wordWrappedLabel);
+        string localPropFile = this.androidProjectPath + "/local.properties";
+        string savedSdkString = "";
+        if (!Directory.Exists(this.androidSdkPath) && Directory.Exists(this.androidProjectPath) && File.Exists(localPropFile))
+        {
+            var match = Regex.Match(File.ReadAllText(localPropFile), "sdk.dir=([^\n]*)\n", RegexOptions.Multiline);
+            if (match.Success)
+            {
+                savedSdkString = match.Groups[1].Captures[0].Value;
+                androidSdkPath = savedSdkString.Replace(@"\:", @":").Replace(@"\\", @"\");
+            }
+        }
+        string sdkPath = GUILayout.TextField(this.androidSdkPath);
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Browse file system")) sdkPath = EditorUtility.OpenFolderPanel("Android SDK tools", sdkPath, "");
+        if (GUILayout.Button("Download")) Application.OpenURL("https://developer.android.com/studio#command-tools");
+        EditorGUILayout.EndHorizontal();
+        this.androidSdkPath = sdkPath;
+        if (Directory.Exists(this.androidSdkPath) && Directory.Exists(this.androidProjectPath))
+        {
+            string text = File.ReadAllText(localPropFile);
+            File.WriteAllText(localPropFile, text.Replace("=" + savedSdkString + "\n", "=" + androidSdkPath));
+        }
+        GUILayout.Space(20);
+
         EditorGUILayout.LabelField("Finally, build the Embedded Unity Drone Control project with your Unity game files: ", EditorStyles.wordWrappedLabel);
         if (GUILayout.Button("Build")) BuildProject();
+        
+        if (GUILayout.Button("Install")) InstallProject();
     }
 
     void ExportProject()
@@ -92,46 +121,61 @@ public class DroneProjectBuilder : EditorWindow {
             Directory.CreateDirectory(dstPath);
         }
         FileUtil.ReplaceDirectory(srcPath, dstPath); // copy srcPath to dstPath
-
-        // TODO: Run grep build on asp
-        ExecuteCommand("gradlew", "assembleDebug", androidProjectPath);
         
+        string error = ExecuteGradle("assembleDebug");
+        bool success = !error.Contains("FAILURE:");
+        Debug.Log("Build done. " + error);
     }
 
-    void ExecuteCommand(string command, string arguments = null, string workingDirectory=null) 
+    void InstallProject()
     {
-        System.Diagnostics.ProcessStartInfo pInfo = new System.Diagnostics.ProcessStartInfo(command)
-        {
-            UseShellExecute = true
-        };
-        if (null != arguments)
-            pInfo.Arguments = arguments;
-        if (null != workingDirectory)
-            pInfo.WorkingDirectory = workingDirectory;
-
-        System.Diagnostics.Process p = new System.Diagnostics.Process
-        {
-            StartInfo = pInfo
-        };
-        p.Start();
-        p.WaitForExit();
-        p.Close();
-        Debug.Log("Build complete. Generated APK is in " + this.androidProjectPath + "/build/outputs/apk/");
+        Debug.Log("Install Project " +  ExecuteGradle("installDebug"));
     }
 
-    private static string GetShellExe()
+    string ExecuteGradle(string arguments)
+    {
+        return ExecuteCommand(androidProjectPath + "/" + GetGradlewExe(), arguments, androidProjectPath);
+    }
+
+    string ExecuteCommand(string command, string arguments = null, string workingDirectory = null)
+    {
+        var outputText = new StringBuilder();
+        var errorText = new StringBuilder();
+
+        using (var process = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(
+            command,
+            arguments)
+        {
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            WorkingDirectory = workingDirectory
+        }))
+        {
+
+            process.ErrorDataReceived += (sendingProcess, errorLine) =>
+            {
+                errorText.AppendLine(errorLine.Data); // capture the error
+            };
+            
+            process.BeginErrorReadLine();
+            process.WaitForExit();
+        }
+        return errorText.ToString();
+    }
+
+    private static string GetGradlewExe()
     {
         // Determine the name of the shell process to run commands through, based on OS family
         OperatingSystemFamily os = SystemInfo.operatingSystemFamily;
         switch (os)
         {
             case OperatingSystemFamily.Windows: // windows has cmd command line
-                return "cmd.exe";               
+                return "gradlew.bat";               
             case OperatingSystemFamily.Linux:   // linux has bash shell
             case OperatingSystemFamily.MacOSX:  // mac has bash shell
             case OperatingSystemFamily.Other:   
             default:                            // when in doubt, assume bash and maybe it will work
-                return "/bin/bash";
+                return "gradlew";
         }
     }
 }
