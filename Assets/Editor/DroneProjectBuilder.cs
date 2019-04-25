@@ -12,6 +12,7 @@ public class DroneProjectBuilder : EditorWindow {
     const string OPERATION_TITLE = "Build with DJI integration";
     [SerializeField] private string androidProjectPath = "";
     [SerializeField] private string androidSdkPath = "";
+    [SerializeField] private string buildJdkPath = "";
 
     [MenuItem("Drone/" + OPERATION_TITLE)]
     static void Init()
@@ -60,33 +61,76 @@ public class DroneProjectBuilder : EditorWindow {
 
         EditorGUILayout.LabelField("Next, find the Android SDK Tools: ", EditorStyles.wordWrappedLabel);
         string localPropFile = this.androidProjectPath + "/local.properties";
-        string savedSdkString = "";
-        if (!Directory.Exists(this.androidSdkPath) && Directory.Exists(this.androidProjectPath) && File.Exists(localPropFile))
-        {
-            var match = Regex.Match(File.ReadAllText(localPropFile), "sdk.dir=([^\n]*)\n", RegexOptions.Multiline);
-            if (match.Success)
-            {
-                savedSdkString = match.Groups[1].Captures[0].Value;
-                androidSdkPath = savedSdkString.Replace(@"\:", @":").Replace(@"\\", @"\");
-            }
-        }
+        string savedSdkString = GetSavedAndroidSdkPath(localPropFile);
         string sdkPath = GUILayout.TextField(this.androidSdkPath);
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Browse file system")) sdkPath = EditorUtility.OpenFolderPanel("Android SDK tools", sdkPath, "");
         if (GUILayout.Button("Download")) Application.OpenURL("https://developer.android.com/studio#command-tools");
         EditorGUILayout.EndHorizontal();
         this.androidSdkPath = sdkPath;
-        if (Directory.Exists(this.androidSdkPath) && Directory.Exists(this.androidProjectPath))
+        try
         {
-            string text = File.ReadAllText(localPropFile);
-            File.WriteAllText(localPropFile, text.Replace("=" + savedSdkString + "\n", "=" + androidSdkPath));
+            if (Directory.Exists(this.androidSdkPath) && Directory.Exists(this.androidProjectPath))
+            {
+                if (!File.Exists(localPropFile))
+                {
+                    File.Create(localPropFile).Close();
+                    File.WriteAllText(localPropFile, "sdk.dir=" + androidSdkPath + "\n");
+                }
+                else
+                {
+                    if (savedSdkString == "")
+                        savedSdkString = GetSavedAndroidSdkPath(localPropFile);
+                    Debug.Log(savedSdkString);
+                    string text = File.ReadAllText(localPropFile);
+                    string key = "=" + savedSdkString + "\n";
+                    if (savedSdkString != "" && text.Contains(key))
+                        text = text.Replace(key, "=" + androidSdkPath + "\n");
+                    else
+                        text = text + "sdk.dir=" + androidSdkPath + "\n";
+                    File.WriteAllText(localPropFile, text);
+                }
+            }
+        } catch (IOException e)
+        {
+            Debug.Log(e);
         }
+        GUILayout.Space(20);
+
+        string jdkPath = GUILayout.TextField(this.buildJdkPath);
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Browse file system")) jdkPath = EditorUtility.OpenFolderPanel("JDK Home", jdkPath, "");
+        //if (GUILayout.Button("Download")) Application.OpenURL("https://developer.android.com/studio#command-tools");
+        EditorGUILayout.EndHorizontal();
+        this.buildJdkPath = jdkPath;
         GUILayout.Space(20);
 
         EditorGUILayout.LabelField("Finally, build the Embedded Unity Drone Control project with your Unity game files: ", EditorStyles.wordWrappedLabel);
         if (GUILayout.Button("Build")) BuildProject();
         
         if (GUILayout.Button("Install")) InstallProject();
+    }
+
+    string GetSavedAndroidSdkPath(string localPropFile)
+    {
+        string savedSdkString = androidSdkPath;
+        try
+        {
+            if (!Directory.Exists(this.androidSdkPath) && Directory.Exists(this.androidProjectPath) && File.Exists(localPropFile))
+            {
+                var match = Regex.Match(File.ReadAllText(localPropFile), "sdk.dir=([^\n]*)\n", RegexOptions.Multiline);
+                if (match.Success)
+                {
+                    savedSdkString = match.Groups[1].Captures[0].Value;
+                    androidSdkPath = savedSdkString.Replace(@"\:", @":").Replace(@"\\", @"\");
+                }
+            }
+        }
+        catch (IOException e)
+        {
+            Debug.Log(e);
+        }
+        return savedSdkString;
     }
 
     void ExportProject()
@@ -122,14 +166,14 @@ public class DroneProjectBuilder : EditorWindow {
         }
         FileUtil.ReplaceDirectory(srcPath, dstPath); // copy srcPath to dstPath
         
-        string error = ExecuteGradle("assembleDebug");
+        string error = ExecuteGradle("assembleDebug -Dorg.gradle.java.home=" + buildJdkPath);
         bool success = !error.Contains("FAILURE:");
         Debug.Log("Build done. " + error);
     }
 
     void InstallProject()
     {
-        Debug.Log("Install Project " +  ExecuteGradle("installDebug"));
+        Debug.Log("Install Project " +  ExecuteGradle("installDebug -Dorg.gradle.java.home=" + buildJdkPath));
     }
 
     string ExecuteGradle(string arguments)
