@@ -100,7 +100,7 @@ public class DroneProjectBuilder : EditorWindow {
         string jdkPath = GUILayout.TextField(this.buildJdkPath);
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Browse file system")) jdkPath = EditorUtility.OpenFolderPanel("JDK Home", jdkPath, "");
-        //if (GUILayout.Button("Download")) Application.OpenURL("https://developer.android.com/studio#command-tools");
+        if (GUILayout.Button("Download")) Application.OpenURL("https://www.oracle.com/technetwork/java/javase/downloads/index.html");
         EditorGUILayout.EndHorizontal();
         this.buildJdkPath = jdkPath;
         GUILayout.Space(20);
@@ -136,7 +136,7 @@ public class DroneProjectBuilder : EditorWindow {
     void ExportProject()
     {
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
-        buildPlayerOptions.scenes = new[] { "Assets/main.unity", "Assets/start.unity", "Assets/setupScene.unity" };
+        buildPlayerOptions.scenes = new[] { "Assets/start.unity", "Assets/setupScene.unity", "Assets/main.unity" };
         buildPlayerOptions.locationPathName = "exported";
         buildPlayerOptions.target = BuildTarget.Android;
         buildPlayerOptions.options = BuildOptions.AcceptExternalModificationsToPlayer;
