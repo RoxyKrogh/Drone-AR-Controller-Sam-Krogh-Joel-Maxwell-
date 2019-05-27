@@ -911,7 +911,9 @@ public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterfa
                 @Override
                 public void run() {
                     showToast("registering, pls wait...");
-                    DJISDKManager.getInstance().registerApp(DJIfrontEnd.this.getApplicationContext(), new DJISDKManager.SDKManagerCallback() {
+                    Context context = getApplicationContext();
+                    Log.v(TAG, "Registering context for package: " + context.getPackageName());
+                    DJISDKManager.getInstance().registerApp(context, new DJISDKManager.SDKManagerCallback() {
                         @Override
                         public void onRegister(DJIError djiError) {
                             if (djiError == DJISDKError.REGISTRATION_SUCCESS) {
