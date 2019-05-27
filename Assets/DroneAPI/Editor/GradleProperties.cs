@@ -16,7 +16,6 @@ namespace droneapi
         void IPostGenerateGradleAndroidProject.OnPostGenerateGradleAndroidProject(string path)
         {
             // Manually add properties to build.gradle file during build
-            Debug.Log("Bulid path : " + path);
             string gradlePropertiesFile = path + "/gradle.properties";
             if (File.Exists(gradlePropertiesFile))
             {

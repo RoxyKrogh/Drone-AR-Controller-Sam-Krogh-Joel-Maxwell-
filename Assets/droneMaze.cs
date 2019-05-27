@@ -8,6 +8,8 @@ using UnityEngine.UI;
 
 public class droneMaze : MonoBehaviour
 {
+    public DroneControl controller;
+
     public Button startBtn;
     public Button Drone_video_btn;
     public Button Phone_video_btn;
@@ -58,9 +60,9 @@ public class droneMaze : MonoBehaviour
     private bool phone_camera_flag;
     private bool calc_distance_flag;
     private bool droneRender;
-    private Double[] baseLoc;
-    private Double[] phoneLoc;
-    private Double[] droneLoc;
+    private DroneControl.Location baseLoc;
+    private DroneControl.Location phoneLoc;
+    private DroneControl.Location droneLoc;
 
     // Drone Camera
     private Texture2D tex2d;
@@ -90,8 +92,6 @@ public class droneMaze : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
-
         testButton.onClick.AddListener(setStartPos);
         update_display_flag = true;
         update_status_flag = false;
@@ -136,7 +136,7 @@ public class droneMaze : MonoBehaviour
         webTex = new WebCamTexture(500, 500, 5);
         webTex.Stop(); // just to be safe
         drone_camera_flag = true;
-        getAppContext().Call("enableVideo");
+        controller.EnableVideo();
         enableVirtualSticks();
     }
 
@@ -166,13 +166,13 @@ public class droneMaze : MonoBehaviour
         if (drone_camera_flag)
         {
             drone_camera_flag = false;
-            getAppContext().Call("disableVideo");
+            controller.DisableVideo();
             Drone_video_btn.colors = on;
         }
         else
         {
             drone_camera_flag = true;
-            getAppContext().Call("enableVideo");
+            controller.EnableVideo();
             Drone_video_btn.colors = off;
         }
     }
@@ -222,27 +222,21 @@ public class droneMaze : MonoBehaviour
 
     void toast()
     {
-        callVoidDroneFunc("showToast", new object[] { "Button Clicked in Unity" }); 
+        controller.ShowToast("Button Clicked in Unity"); 
     }
 
     void updateText()
     {
-        using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-        {
-            using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
-            {
-                obj_Activity.Call("refreshConnectionStatus");
-                obj_Activity.Call("refreshFlightControllerStatus");
-                connection_status.text = obj_Activity.Call<string>("getConnectionStatus");
-                connected_hardware.text = obj_Activity.Call<string>("getProductText");
-                flight_controller_status.text = obj_Activity.Call<string>("getState");
-            }
-        }
+        controller.RefreshConnectionStatus();
+        controller.RefreshFlightControllerStatus();
+        connection_status.text = controller.ConnectionStatus;
+        connected_hardware.text = controller.ProductText;
+        flight_controller_status.text = controller.State;
     }
 
     void startDroneFunc()
     {
-         callVoidDroneFunc("setupDroneConnection");
+        controller.SetupDroneConnection();
     }
 
     void updateDisplay()
@@ -252,11 +246,8 @@ public class droneMaze : MonoBehaviour
             if (frame_ready_flag)
             {
                 frame_ready_flag = false;
-                byte[] t = getAppContext().Call<byte[]>("getVideoFrame");
-                if (null != t)
+                if (controller.GetVideoFrame(tex2d)) // get video frame and apply to tex2d
                 {
-                    tex2d.LoadImage(t);
-                    tex2d.Apply();
                     droneDisplay.GetComponent<Renderer>().material.mainTexture = tex2d;
                     fps_display.text = "" + Math.Round(1 / (Time.time - lastFrame), 2) + "fps";
                     lastFrame = Time.time;
@@ -287,83 +278,52 @@ public class droneMaze : MonoBehaviour
 
     void takeOff()
     {
-         callVoidDroneFunc("takeOff");
+        controller.TakeOff();
     }
 
     void land()
     {
-        callVoidDroneFunc("land");
+        controller.Land();
     }
 
     void startFollowMe()
     {
-        callVoidDroneFunc("followMeStart");
+        controller.FollowMeStart();
     }
 
     void stopFollowMe()
     {
-        callVoidDroneFunc("followMeStop");
+        controller.FollowMeStop();
     }
 
     void startLocation()
     {
-        callVoidDroneFunc("startLocationService");
+        controller.StartLocationService();
     }
 
     void enableVirtualSticks()
     {
         controlEnabled = true;
-        callVoidDroneFunc("setVirtualControlActive", new object[] { true });
+        controller.VirtualControlEnabled = true;
     }
 
     void disableVirtualSticks()
     {
         controlEnabled = false;
-        callVoidDroneFunc("setVirtualControlActive", new object[] { false });
-    }
-
-    // helper function to reduce code length
-    void callVoidDroneFunc(String funcName)
-    {
-        using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-        {
-            using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
-            {
-                obj_Activity.Call(funcName);
-            }
-        }
-    }
-
-    // helper function to reduce code length
-    void callVoidDroneFunc(String funcName, object[] args)
-    {
-        using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-        {
-            using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
-            {
-                obj_Activity.Call(funcName, args);
-            }
-        }
-    }
-
-    AndroidJavaObject getAppContext()
-    {
-        AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-        AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-        return obj_Activity;
+        controller.VirtualControlEnabled = false;
     }
 
     void yawUp()
     {
         yaw += 10;
         yawValue.text = yaw.ToString();
-        callVoidDroneFunc("setYaw", new object[] { yaw });
+        controller.Yaw = yaw;
     }
     void yawDown()
     {
         yaw -= 10;
         yawValue.text = yaw.ToString();
-        callVoidDroneFunc("setYaw", new object[] { yaw });
+        controller.Yaw = yaw;
     }
 
 
@@ -371,39 +331,39 @@ public class droneMaze : MonoBehaviour
     {
         roll += 1;
         rollValue.text = roll.ToString();
-        callVoidDroneFunc("setRoll", new object[] { roll });
+        controller.Roll = roll;
     }
     void rollDown()
     {
         roll -= 1;
         rollValue.text = roll.ToString();
-        callVoidDroneFunc("setRoll", new object[] { roll });
+        controller.Roll = roll;
     }
 
     void pitchUp()
     {
         pitch += 1;
         pitchValue.text = pitch.ToString();
-        callVoidDroneFunc("setPitch", new object[] { pitch });
+        controller.Pitch = pitch;
     }
     void pitchDown()
     {
         pitch -= 1;
         pitchValue.text = pitch.ToString();
-        callVoidDroneFunc("setPitch", new object[] { pitch });
+        controller.Pitch = pitch;
     }
 
     void throttleUp()
     {
         throttle += 1;
         throttleValue.text = throttle.ToString();
-        callVoidDroneFunc("setThrottle", new object[] { throttle });
+        controller.Throttle = throttle;
     }
     void throttleDown()
     {
         throttle -= 1;
         throttleValue.text = throttle.ToString();
-        callVoidDroneFunc("setThrottle", new object[] { throttle });
+        controller.Throttle = throttle;
     }
 
 
@@ -437,19 +397,19 @@ public class droneMaze : MonoBehaviour
             {
                 throttle = maxThrottle * -RJV;
                 throttleValue.text = throttle.ToString();
-                callVoidDroneFunc("setThrottle", new object[] { throttle });
+                controller.Throttle = throttle;
             }
             else
             {
                 throttle = 0;
                 throttleValue.text = throttle.ToString();
-                callVoidDroneFunc("setThrottle", new object[] { throttle });
+                controller.Throttle = throttle;
             }
             if (Mathf.Abs(RJH) >= 0.1f)
             {
                 yaw = maxYaw * RJH;
                 yawValue.text = yaw.ToString();
-                callVoidDroneFunc("setYaw", new object[] { yaw });
+                controller.Yaw = yaw;
                 droneCamera.transform.Rotate(0, 0, Time.deltaTime * yaw);
                 droneCamera.transform.Rotate(0, 0, Time.deltaTime * yaw);
             }
@@ -457,14 +417,14 @@ public class droneMaze : MonoBehaviour
             {
                 yaw = 0;
                 yawValue.text = yaw.ToString();
-                callVoidDroneFunc("setYaw", new object[] { yaw });
-                
+                controller.Yaw = yaw;
+
             }
             if (Mathf.Abs(LJH) >= 0.1f)
             {
                 pitch = LJH * maxPitch;
-                pitchValue.text = pitch.ToString(); 
-                callVoidDroneFunc("setPitch", new object[] { pitch });
+                pitchValue.text = pitch.ToString();
+                controller.Pitch = pitch;
                 droneHolder.transform.Translate(Time.deltaTime * pitch, 0, 0);
                 
             }
@@ -472,20 +432,20 @@ public class droneMaze : MonoBehaviour
             {
                 pitch = 0;
                 pitchValue.text = pitch.ToString();
-                callVoidDroneFunc("setPitch", new object[] { pitch });
+                controller.Pitch = pitch;
             }
             if (Mathf.Abs(LJV) >= 0.1f)
             {
                 roll = maxRoll * -LJV;
                 rollValue.text = roll.ToString();
-                callVoidDroneFunc("setRoll", new object[] { roll });
+                controller.Roll = roll;
                 droneHolder.transform.Translate(0, 0, Time.deltaTime * roll);
             }
             else
             {
                 roll = 0;
                 rollValue.text = roll.ToString();
-                callVoidDroneFunc("setRoll", new object[] { roll });
+                controller.Roll = roll;
             }
             if (Input.GetButtonDown("B"))
             {
@@ -495,25 +455,25 @@ public class droneMaze : MonoBehaviour
                 if (Input.GetButtonDown("Y"))
                 {
                     Debug.Log("take off buttons!");
-                    callVoidDroneFunc("takeOff");
+                    controller.TakeOff();
                 }
                 if (Input.GetButtonDown("A"))
                 {
                     Debug.Log("Landing buttons!");
-                    callVoidDroneFunc("land");
+                    controller.Land();
                 }
             }
 
             if (!Input.GetButton("L1") && Input.GetButton("R1"))
             {
                 Debug.Log("Gimbal down");
-                callVoidDroneFunc("adjustGimbalRotation", new object[] {-90f, 0f});
+                controller.SetGimbalRotation(-90f, 0f);
             }
 
             if (Input.GetButton("L1") && !Input.GetButton("R1"))
             {
                 Debug.Log("Gimbal up");
-                callVoidDroneFunc("adjustGimbalRotation", new object[] {0f, 0f});
+                controller.SetGimbalRotation(0f, 0f);
             }
 
         }
@@ -569,17 +529,8 @@ public class droneMaze : MonoBehaviour
     void locationUpdate(String data)
     {
         Debug.Log("LOCATION");
-        Double[] loc;
-        Double[] dLoc;
-        using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-        {
-            using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
-            {
-                loc = obj_Activity.Call<Double[]>("getPhoneLocation");
-                dLoc = obj_Activity.Call<Double[]>("getDroneLocation");
-                
-            }
-        }
+        var loc = controller.PhoneLocation;
+        var dLoc = controller.DroneLocation;
         if(null == baseLoc)
         {
             baseLoc = loc;

@@ -10,6 +10,27 @@ public class DroneControl : MonoBehaviour
     //private float maxYaw, maxThrottle, maxPitch, maxRoll;
     private static bool controlEnabled = false;
 
+    public class Location
+    {
+        public Location(double[] xyz)
+        {
+            this.xyz = xyz;
+        }
+        private double[] xyz;
+        public double X { get { return xyz[0]; } set { xyz[0] = value; } }
+        public double Y { get { return xyz[1]; } set { xyz[1] = value; } }
+        public double Z { get { return xyz[2]; } set { xyz[2] = value; } }
+        public double this[int i]
+        {
+            get { return xyz[i]; }
+            set { xyz[i] = value; }
+        }
+        public override string ToString()
+        {
+            return xyz == null ? "Loc(null)" : "Loc("+X+","+Y+","+Z+")";
+        }
+    }
+
     private void Start()
     {
     }
@@ -59,21 +80,19 @@ public class DroneControl : MonoBehaviour
         get { return CallDroneFunc<string>("getConnectionStatus"); }
     }
 
-    public Vector3 DroneAttitude
+    public Location DroneAttitude
     {
         get
         {
-            var v = CallDroneFunc<double[]>("getDroneAttitude");
-            return new Vector3((float)v[0], (float)v[1], (float)v[2]);
+            return new Location(CallDroneFunc<double[]>("getDroneAttitude"));
         }
     }
 
-    public Vector3 DroneLocation
+    public Location DroneLocation
     {
         get
         {
-            var v = CallDroneFunc<double[]>("getDroneLocation");
-            return new Vector3((float)v[0], (float)v[1], (float)v[2]);
+            return new Location(CallDroneFunc<double[]>("getDroneLocation"));
         }
     }
 
@@ -97,12 +116,11 @@ public class DroneControl : MonoBehaviour
         get { return CallDroneFunc<bool>("getMotorsOn"); }
     }
 
-    public Vector3 PhoneLocation
+    public Location PhoneLocation
     {
         get
         {
-            var v = CallDroneFunc<double[]>("getFlightMode");
-            return new Vector3((float)v[0], (float)v[1], (float)v[2]);
+            return new Location(CallDroneFunc<double[]>("getFlightMode"));
         }
     }
 
@@ -244,6 +262,13 @@ public class DroneControl : MonoBehaviour
                 return obj_Activity.Call<T>(funcName, args);
             }
         }
+    }
+
+    AndroidJavaObject getAppContext()
+    {
+        AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+        AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+        return obj_Activity;
     }
 
 }
