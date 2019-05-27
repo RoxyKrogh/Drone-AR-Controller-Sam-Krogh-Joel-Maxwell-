@@ -1,4 +1,11 @@
 -- Merging decision tree log ---
+meta-data#com.dji.sdk.API_KEY
+INJECTED from D:\Documents\School\CSS\Research\CrossReality\UnityProject\EmbeddedView\src\main\AndroidManifest.xml:30:5-32:41
+	android:value
+		INJECTED from D:\Documents\School\CSS\Research\CrossReality\UnityProject\EmbeddedView\src\main\AndroidManifest.xml
+		ADDED from D:\Documents\School\CSS\Research\CrossReality\UnityProject\EmbeddedView\src\main\AndroidManifest.xml:32:9-39
+	android:name
+		ADDED from D:\Documents\School\CSS\Research\CrossReality\UnityProject\EmbeddedView\src\main\AndroidManifest.xml:31:9-43
 manifest
 ADDED from D:\Documents\School\CSS\Research\CrossReality\UnityProject\EmbeddedView\src\main\AndroidManifest.xml:2:1-64:12
 INJECTED from D:\Documents\School\CSS\Research\CrossReality\UnityProject\EmbeddedView\src\main\AndroidManifest.xml:2:1-64:12
@@ -187,12 +194,6 @@ ADDED from D:\Documents\School\CSS\Research\CrossReality\UnityProject\EmbeddedVi
 		ADDED from D:\Documents\School\CSS\Research\CrossReality\UnityProject\EmbeddedView\src\main\AndroidManifest.xml:29:57-81
 	android:name
 		ADDED from D:\Documents\School\CSS\Research\CrossReality\UnityProject\EmbeddedView\src\main\AndroidManifest.xml:29:19-56
-meta-data#com.dji.sdk.API_KEY
-ADDED from D:\Documents\School\CSS\Research\CrossReality\UnityProject\EmbeddedView\src\main\AndroidManifest.xml:30:5-32:51
-	android:value
-		ADDED from D:\Documents\School\CSS\Research\CrossReality\UnityProject\EmbeddedView\src\main\AndroidManifest.xml:32:9-49
-	android:name
-		ADDED from D:\Documents\School\CSS\Research\CrossReality\UnityProject\EmbeddedView\src\main\AndroidManifest.xml:31:9-43
 service#dji.sdk.sdkmanager.DJIGlobalService
 ADDED from D:\Documents\School\CSS\Research\CrossReality\UnityProject\EmbeddedView\src\main\AndroidManifest.xml:33:5-35:15
 MERGED from [com.dji:dji-sdk:4.9.0.1] C:\Users\joelm\.gradle\caches\transforms-2\files-2.1\1f6522afb73a0af2d95697b9761f6117\AndroidManifest.xml:61:9-63:43

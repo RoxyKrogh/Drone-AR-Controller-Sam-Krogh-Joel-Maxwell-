@@ -29,7 +29,7 @@
     <uses-library android:name="org.apache.http.legacy" android:required="false"/>
     <meta-data
         android:name="com.dji.sdk.API_KEY"
-        android:value="223c0bf6b28347e19e0d0b94"/>
+        android:value="${DJI_SDK_KEY}"/>
     <service android:name="dji.sdk.sdkmanager.DJIGlobalService"
         android:exported="false">
     </service>
