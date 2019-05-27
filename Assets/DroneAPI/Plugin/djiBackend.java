@@ -26,6 +26,7 @@ import com.unity3d.player.UnityPlayer;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.ByteBuffer;
 
 import dji.sdk.base.BaseComponent;
 import dji.sdk.base.BaseProduct;
@@ -50,6 +51,7 @@ public class djiBackend extends Application{ //implements TextureView.SurfaceTex
     private UnityPlayer mUnityPlayer;
 
     private String TAG = "BACKEND_DRONE";
+    private static final String DRONE_OBJ = "DroneCanvas";
     protected VideoFeeder.VideoDataListener mReceivedVideoDataCallBack = null;
     protected DJICodecManager mCodecManager = null;
     private ResultReceiver rec;
@@ -142,11 +144,11 @@ public class djiBackend extends Application{ //implements TextureView.SurfaceTex
 
         };*/
 
-        //onSurfaceTextureAvailable(null,16*40,9*40); //for YUV data
-        /*mCodecManager.enabledYuvData(true);
+        onSurfaceTextureAvailable(null,16*40,9*40); //for YUV data
+        mCodecManager.enabledYuvData(true);
 
         mCodecManager.setYuvDataCallback(new DJICodecManager.YuvDataCallback() {
-            @Override
+            //@Override
             public void onYuvDataReceived(ByteBuffer yuvFrame, int dataSize, int width, int height) {
                 if(!ready || !video_enabled){
                     Log.d(TAG, "onYuvDataReceived: VIDEO READY:"+ready+" VIDEO ENABLED:"+video_enabled);
@@ -219,12 +221,12 @@ public class djiBackend extends Application{ //implements TextureView.SurfaceTex
                     synchronized (this){
                         jdata = baos.toByteArray();
                     }
-                    mUnityPlayer.UnitySendMessage("Canvas","set_frame_ready","true");
+                    mUnityPlayer.UnitySendMessage(DRONE_OBJ,"set_frame_ready","true");
                     ready = true;
                 }
 
             }
-        });*/
+        });
 
         mReceivedVideoDataCallBack = new VideoFeeder.VideoDataListener() {
             @Override
@@ -275,8 +277,8 @@ public class djiBackend extends Application{ //implements TextureView.SurfaceTex
 
      /* Video functions */
 
-    /*
-    @Override
+
+    //@Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
         Log.d(TAG, "onSurfaceTextureAvailable");
         if (mCodecManager == null) {
@@ -285,6 +287,7 @@ public class djiBackend extends Application{ //implements TextureView.SurfaceTex
             Log.d(TAG, "onSurfaceTextureAvailable: "+ mCodecManager.toString());
         }
     }
+    /*
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
         Log.d(TAG, "onSurfaceTextureSizeChanged");
@@ -431,7 +434,7 @@ public class djiBackend extends Application{ //implements TextureView.SurfaceTex
             yuvimage.compressToJpeg(new Rect(0, 0, width, height), 80, baos);
             Log.d(TAG, "onYuvDataReceived: compress");
             jdata = baos.toByteArray();
-            UnityPlayer.UnitySendMessage("Canvas","set_frame_ready","true");
+            UnityPlayer.UnitySendMessage(DRONE_OBJ,"set_frame_ready","true");
             ready = true;
             return null;
         }

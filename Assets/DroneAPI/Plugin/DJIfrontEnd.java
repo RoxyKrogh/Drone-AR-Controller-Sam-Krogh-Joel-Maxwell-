@@ -94,6 +94,7 @@ public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterfa
     private List<String> missingPermission = new ArrayList<>();
     private AtomicBoolean isRegistrationInProgress = new AtomicBoolean(false);
     private static final int REQUEST_PERMISSION_CODE = 12345;
+    private static final String DRONE_OBJ = "DroneCanvas";
 
     //------------------------------------
     private djiBackend djiBack;
@@ -488,7 +489,7 @@ public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterfa
                 public void onLocationChanged(Location location) {
                     movingObjectLocation = new LocationCoordinate2D(location.getLatitude(), location.getLongitude());
                     movingObjectBearing = location.getBearing();
-                    UnityPlayer.UnitySendMessage("Canvas", "locationUpdate","");
+                    UnityPlayer.UnitySendMessage(DRONE_OBJ, "locationUpdate","");
                 }
 
                 @Override
