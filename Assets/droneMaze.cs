@@ -5,10 +5,9 @@ using UnityEngine;
 using UnityEngine.UI;
 //using UnityStandardAssets.CrossPlatformInput;
 
-
 public class droneMaze : MonoBehaviour
 {
-    public DroneControl controller;
+    public DroneBridge controller;
 
     public Button startBtn;
     public Button Drone_video_btn;
@@ -25,16 +24,12 @@ public class droneMaze : MonoBehaviour
 
     // flight controll values
     public Text yawValue;
-    public float yaw;
 
     public Text rollValue;
-    public float roll;
 
     public Text pitchValue;
-    public float pitch;
 
     public Text throttleValue;
-    public float throttle;
 
     public Text locationText;
     public Text distanceText;
@@ -60,9 +55,9 @@ public class droneMaze : MonoBehaviour
     private bool phone_camera_flag;
     private bool calc_distance_flag;
     private bool droneRender;
-    private DroneControl.Location baseLoc;
-    private DroneControl.Location phoneLoc;
-    private DroneControl.Location droneLoc;
+    private DroneBridge.Location baseLoc;
+    private DroneBridge.Location phoneLoc;
+    private DroneBridge.Location droneLoc;
 
     // Drone Camera
     private Texture2D tex2d;
@@ -73,7 +68,6 @@ public class droneMaze : MonoBehaviour
 
     // Joystick Buttons
     private string[] buttons = new string[] { "A", "B", "X", "Y", "R1", "R2", "L1", "L2", "L3", "R3", "START", "BACK" };
-    private float maxYaw, maxThrottle, maxPitch, maxRoll;
     private bool controlEnabled;
 
     // Display positions
@@ -115,15 +109,6 @@ public class droneMaze : MonoBehaviour
         stopControl.onClick.AddListener(disableVirtualSticks);
         swapDisplays.onClick.AddListener(swap);
         droneRender = false;
-        // flight controll values
-        maxYaw = 90f;
-        maxThrottle = 2;
-        maxPitch = 2;
-        maxRoll = 2;
-        yaw = 0;
-        pitch = 0;
-        roll = 0;
-        throttle = 0;
 
         //#######################
         lastFrame = Time.time;
@@ -200,7 +185,7 @@ public class droneMaze : MonoBehaviour
         }
     }
 
-    void swap()
+    public void swap()
     {
         droneRender = !droneRender;
 
@@ -313,173 +298,6 @@ public class droneMaze : MonoBehaviour
         controller.VirtualControlEnabled = false;
     }
 
-    void yawUp()
-    {
-        yaw += 10;
-        yawValue.text = yaw.ToString();
-        controller.Yaw = yaw;
-    }
-    void yawDown()
-    {
-        yaw -= 10;
-        yawValue.text = yaw.ToString();
-        controller.Yaw = yaw;
-    }
-
-
-    void rollUp()
-    {
-        roll += 1;
-        rollValue.text = roll.ToString();
-        controller.Roll = roll;
-    }
-    void rollDown()
-    {
-        roll -= 1;
-        rollValue.text = roll.ToString();
-        controller.Roll = roll;
-    }
-
-    void pitchUp()
-    {
-        pitch += 1;
-        pitchValue.text = pitch.ToString();
-        controller.Pitch = pitch;
-    }
-    void pitchDown()
-    {
-        pitch -= 1;
-        pitchValue.text = pitch.ToString();
-        controller.Pitch = pitch;
-    }
-
-    void throttleUp()
-    {
-        throttle += 1;
-        throttleValue.text = throttle.ToString();
-        controller.Throttle = throttle;
-    }
-    void throttleDown()
-    {
-        throttle -= 1;
-        throttleValue.text = throttle.ToString();
-        controller.Throttle = throttle;
-    }
-
-
-    void controllerInput()
-    {
-        buttonText.text = "";
-        foreach (string key in buttons)
-        {
-            if (Input.GetButton(key))
-            {
-                buttonText.text += key + " ";
-            }
-
-        }
-        float LJV = Input.GetAxis("LJV");
-        float LJH = Input.GetAxis("LJH");
-        float RJV = Input.GetAxis("RJV");
-        float RJH = Input.GetAxis("RJH");
-        float DPV = Input.GetAxis("DPV");
-        float DPH = Input.GetAxis("DPH");
-        buttonText.text += Mathf.Abs(LJV) >= 0.1f ? "LJV: "+LJV.ToString() : "";
-        buttonText.text += Mathf.Abs(LJH) >= 0.1f ? "LJH: " + LJH.ToString() : "";
-        buttonText.text += Mathf.Abs(RJV) >= 0.1f ? "RJV: " + RJV.ToString() : "";
-        buttonText.text += Mathf.Abs(RJH) >= 0.1f ? "RJH: " + RJH.ToString() : "";
-        buttonText.text += Mathf.Abs(DPH) >= 0.1f ? "DPH: " + DPH.ToString() : "";
-        buttonText.text += Mathf.Abs(DPV) >= 0.1f ? "DPV: " + DPV.ToString() : "";
-
-        if( controlEnabled)
-        {
-            if (Mathf.Abs(RJV) >= 0.1f)
-            {
-                throttle = maxThrottle * -RJV;
-                throttleValue.text = throttle.ToString();
-                controller.Throttle = throttle;
-            }
-            else
-            {
-                throttle = 0;
-                throttleValue.text = throttle.ToString();
-                controller.Throttle = throttle;
-            }
-            if (Mathf.Abs(RJH) >= 0.1f)
-            {
-                yaw = maxYaw * RJH;
-                yawValue.text = yaw.ToString();
-                controller.Yaw = yaw;
-                droneCamera.transform.Rotate(0, 0, Time.deltaTime * yaw);
-                droneCamera.transform.Rotate(0, 0, Time.deltaTime * yaw);
-            }
-            else
-            {
-                yaw = 0;
-                yawValue.text = yaw.ToString();
-                controller.Yaw = yaw;
-
-            }
-            if (Mathf.Abs(LJH) >= 0.1f)
-            {
-                pitch = LJH * maxPitch;
-                pitchValue.text = pitch.ToString();
-                controller.Pitch = pitch;
-                droneHolder.transform.Translate(Time.deltaTime * pitch, 0, 0);
-                
-            }
-            else
-            {
-                pitch = 0;
-                pitchValue.text = pitch.ToString();
-                controller.Pitch = pitch;
-            }
-            if (Mathf.Abs(LJV) >= 0.1f)
-            {
-                roll = maxRoll * -LJV;
-                rollValue.text = roll.ToString();
-                controller.Roll = roll;
-                droneHolder.transform.Translate(0, 0, Time.deltaTime * roll);
-            }
-            else
-            {
-                roll = 0;
-                rollValue.text = roll.ToString();
-                controller.Roll = roll;
-            }
-            if (Input.GetButtonDown("B"))
-            {
-                swap();
-            }
-            if(Input.GetButton("L2") && Input.GetButton("R2")){
-                if (Input.GetButtonDown("Y"))
-                {
-                    Debug.Log("take off buttons!");
-                    controller.TakeOff();
-                }
-                if (Input.GetButtonDown("A"))
-                {
-                    Debug.Log("Landing buttons!");
-                    controller.Land();
-                }
-            }
-
-            if (!Input.GetButton("L1") && Input.GetButton("R1"))
-            {
-                Debug.Log("Gimbal down");
-                controller.SetGimbalRotation(-90f, 0f);
-            }
-
-            if (Input.GetButton("L1") && !Input.GetButton("R1"))
-            {
-                Debug.Log("Gimbal up");
-                controller.SetGimbalRotation(0f, 0f);
-            }
-
-        }
-        
-    }
-
     // Haversine formula
     // https://en.wikipedia.org/wiki/Haversine_formula
     // The haversine formula determines the great-circle distance between two points on a sphere given their longitudes and latitudes.
@@ -556,6 +374,5 @@ public class droneMaze : MonoBehaviour
         {
             updateDisplay();
         }
-        controllerInput();
     }
 }

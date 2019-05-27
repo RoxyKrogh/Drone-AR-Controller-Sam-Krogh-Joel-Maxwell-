@@ -9197,6 +9197,7 @@ GameObject:
   - component: {fileID: 1318069393}
   - component: {fileID: 1318069394}
   - component: {fileID: 1318069395}
+  - component: {fileID: 1318069396}
   m_Layer: 5
   m_Name: DroneCanvas
   m_TagString: Untagged
@@ -9347,13 +9348,9 @@ MonoBehaviour:
   droneView: {fileID: 8400000, guid: f76b746522cb2f746ba97887fca8bed1, type: 2}
   phoneView: {fileID: 8400000, guid: 446876ff8a88c9d4599c6d22b6a5e780, type: 2}
   yawValue: {fileID: 818846229}
-  yaw: 0
   rollValue: {fileID: 571705817}
-  roll: 0
   pitchValue: {fileID: 325417933}
-  pitch: 0
   throttleValue: {fileID: 308607823}
-  throttle: 0
   locationText: {fileID: 13623243}
   distanceText: {fileID: 1371861973}
   left_display: {fileID: 67711451}
@@ -9380,6 +9377,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c35c281a700d68c4fb67792d495a4a97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1318069396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1318069388}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86c42de0b4f2ecb4abbd302c1d5cc7d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  swapVideoEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1318069394}
+        m_MethodName: swap
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  droneHolder: {fileID: 802881774}
+  droneCamera: {fileID: 591349466}
+  controlEnabled: 1
 --- !u!1 &1320199045
 GameObject:
   m_ObjectHideFlags: 0
