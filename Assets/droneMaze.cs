@@ -249,10 +249,8 @@ public class droneMaze : MonoBehaviour
     {
         if (drone_camera_flag )
         {
-            Debug.Log("Drone Camera");
             if (frame_ready_flag)
             {
-                Debug.Log("Frame Ready");
                 frame_ready_flag = false;
                 byte[] t = getAppContext().Call<byte[]>("getVideoFrame");
                 if (null != t)

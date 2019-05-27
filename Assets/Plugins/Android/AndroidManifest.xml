@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.uwb.xr.droneGame" xmlns:tools="http://schemas.android.com/tools" android:installLocation="auto">
+  <supports-screens android:smallScreens="true" android:normalScreens="true" android:largeScreens="true" android:xlargeScreens="true" android:anyDensity="true" />
+  <uses-permission android:name="android.permission.VIBRATE"/>
+  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+  <uses-permission android:name="android.permission.WAKE_LOCK"/>
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+  <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+  <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
+      tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:remove="android:maxSdkVersion"/>
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:remove="android:maxSdkVersion"/>
+  <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+  <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+  <uses-permission android:name="android.permission.BLUETOOTH"/>
+  <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+  <uses-feature
+      android:name="android.hardware.usb.host"
+      android:required="false"/>
+  <uses-feature
+      android:name="android.hardware.usb.accessory"
+      android:required="true"/>
+
+  <application android:theme="@style/UnityThemeSelector" android:icon="@mipmap/app_icon" android:label="@string/app_name" android:name="com.uwb.xr.djiBridge.MApplication">
+
+    <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+    <meta-data
+        android:name="com.dji.sdk.API_KEY"
+        android:value="9a6f6739dd51a9c7b73c33a1"/>
+    <service android:name="dji.sdk.sdkmanager.DJIGlobalService"
+        android:exported="false">
+    </service>
+    <meta-data android:name="IMMERSIVE_MODE" android:value="true" />
+
+    <activity android:label="@string/app_name" android:screenOrientation="fullSensor" android:launchMode="singleTask" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" android:hardwareAccelerated="false" android:name="com.uwb.xr.djiBridge.DJIfrontEnd">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+        <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"/>
+      </intent-filter>
+      <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
+      <meta-data
+          android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+          android:resource="@xml/accessory_filter"/>
+    </activity>
+    <meta-data android:name="unity.tango-enable" android:value="True" />
+    <meta-data android:name="unityplayer.SkipPermissionsDialog" android:value="true" />
+    <meta-data android:name="unity.build-id" android:value="89919162-65da-4f92-a3ab-1b9ca501329d" />
+    <meta-data android:name="unity.splash-mode" android:value="0" />
+    <meta-data android:name="unity.splash-enable" android:value="True" />
+  </application>
+  <uses-feature android:glEsVersion="0x00020000" />
+  <uses-permission android:name="android.permission.CAMERA" />
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-feature android:name="android.hardware.camera"  />
+  <uses-feature android:name="android.hardware.camera.autofocus" />
+  <uses-feature android:name="android.hardware.camera.front" android:required="false" />
+  <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+  <uses-feature android:name="android.hardware.touchscreen.multitouch" android:required="false" />
+  <uses-feature android:name="android.hardware.touchscreen.multitouch.distinct" android:required="false" />
+</manifest>
