@@ -76,18 +76,14 @@ android {
 	buildTypes {
 		debug {
 			minifyEnabled **MINIFY_DEBUG**
-			if (GradleVersion.current() >= GradleVersion.version("4.2")) {
-				useProguard **PROGUARD_DEBUG**
-			}
+			useProguard **PROGUARD_DEBUG**
 			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt'**USER_PROGUARD**
 			jniDebuggable true
 		}
 
 		release {
 			minifyEnabled **MINIFY_RELEASE**
-			if (GradleVersion.current() >= GradleVersion.version("4.2")) {
-				useProguard **PROGUARD_RELEASE**
-			}
+			useProguard **PROGUARD_RELEASE**
 			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt'**USER_PROGUARD**
 
 			**SIGNCONFIG**
