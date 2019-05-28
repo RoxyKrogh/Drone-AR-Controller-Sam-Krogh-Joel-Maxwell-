@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AndroidLogFilters">
+    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="87302b18-2048-4859-8b07-2d272bdd9a9c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/DroneAPI/Plugin/djiBridge/DJIfrontEnd.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/DroneAPI/Plugin/djiBridge/DJIfrontEnd.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/DroneAPI/Plugin/djiBridge/djiBackend.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/DroneAPI/Plugin/djiBridge/djiBackend.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/GoogleARCore/SDK/InstantPreview/Scripts/InstantPreview.apk.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/Materials/Stone_wall_pattern.mat" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/Materials/Stone_wall_pattern.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Library/EditorUserBuildSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/../Library/EditorUserBuildSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Library/LastSceneManagerSetup.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Library/LastSceneManagerSetup.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Library/ProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/../Library/ProjectSettings.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Library/ScriptAssemblies/Assembly-CSharp.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../Library/ScriptAssemblies/Assembly-CSharp.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Library/ScriptAssemblies/Assembly-CSharp.dll.mdb" beforeDir="false" afterPath="$PROJECT_DIR$/../Library/ScriptAssemblies/Assembly-CSharp.dll.mdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Library/expandedItems" beforeDir="false" afterPath="$PROJECT_DIR$/../Library/expandedItems" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ProjectSettings/ProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/../ProjectSettings/ProjectSettings.asset" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -30,17 +44,41 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="57" column="19" selection-start-line="57" selection-start-column="19" selection-end-line="58" selection-end-column="56" />
+            <state relative-caret-position="133">
+              <caret line="58" selection-start-line="58" selection-end-line="58" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/djiBridge/djiBackend.java">
+        <entry file="file://$PROJECT_DIR$/../Assets/DroneAPI/Plugin/djiBridge/djiBackend.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1632">
-              <caret line="146" column="25" selection-start-line="146" selection-start-column="25" selection-end-line="146" selection-end-column="25" />
+            <state relative-caret-position="195">
+              <caret line="393" column="54" selection-start-line="393" selection-start-column="54" selection-end-line="393" selection-end-column="54" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#3078#3079#0" expanded="true" />
+                <element signature="e#3317#3318#0" expanded="true" />
+                <element signature="e#4513#4514#0" expanded="true" />
+                <element signature="e#4565#4566#0" expanded="true" />
+                <element signature="class#5264:7460" />
+                <element signature="class#8215:8920" />
+                <element signature="e#10022#10023#0" expanded="true" />
+                <element signature="e#10059#10060#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../Assets/DroneAPI/Plugin/djiBridge/DJIfrontEnd.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="190">
+              <caret line="671" column="9" selection-start-line="671" selection-start-column="9" selection-end-line="671" selection-end-column="9" />
+              <folding>
+                <element signature="e#5123#5339#0" expanded="true" />
+                <element signature="e#5338#5339#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -48,36 +86,18 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mainTemplate.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="708">
-              <caret line="54" column="37" lean-forward="true" selection-start-line="54" selection-start-column="37" selection-end-line="54" selection-end-column="37" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/droneGame/UnityDroneInterface.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="21" column="16" lean-forward="true" selection-start-line="21" selection-start-column="16" selection-end-line="21" selection-end-column="16" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/djiBridge/DJIfrontEnd.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="174">
-              <caret line="576" column="138" selection-start-line="576" selection-start-column="135" selection-end-line="576" selection-end-column="138" />
+            <state>
+              <caret column="37" selection-start-column="37" selection-end-column="37" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/AndroidManifest.xml">
-          <provider selected="true" editor-type-id="android-manifest" />
-          <provider editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="26" column="47" selection-start-line="26" selection-start-column="47" selection-end-line="26" selection-end-column="47" />
+          <provider editor-type-id="android-manifest" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="47" selection-start-column="47" selection-end-column="47" />
             </state>
           </provider>
         </entry>
@@ -88,6 +108,34 @@
     <findStrings>
       <find>setRoll</find>
       <find>get</find>
+      <find>mHandler</find>
+      <find>instance</find>
+      <find>vid</find>
+      <find>mReceivedVideoDataCallBack</find>
+      <find>sendDataToDecoder</find>
+      <find>rec</find>
+      <find>rec</find>
+      <find>rec</find>
+      <find>rec;</find>
+      <find>setResultReceiver</find>
+      <find>mCodecManager</find>
+      <find>disableVideo</find>
+      <find>ready</find>
+      <find>getCameraInstance</find>
+      <find>camera</find>
+      <find>isHandHeldConnected</find>
+      <find>Connected</find>
+      <find>mready</find>
+      <find>FLAG_CONNECTION_CHANGE</find>
+      <find>setUnityObject</find>
+      <find>mProduct</find>
+      <find>setContext</find>
+      <find>getApplicationContext</find>
+      <find>instance</find>
+      <find>@Override</find>
+      <find>onter</find>
+      <find>onterminate</find>
+      <find>SavePhotoTask</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -100,13 +148,15 @@
         <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/mainTemplate.gradle" />
         <option value="$PROJECT_DIR$/gradle.properties" />
+        <option value="$PROJECT_DIR$/../Assets/DroneAPI/Plugin/djiBridge/DJIfrontEnd.java" />
+        <option value="$PROJECT_DIR$/../Assets/DroneAPI/Plugin/djiBridge/djiBackend.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="136" />
-    <option name="y" value="-9" />
-    <option name="width" value="1554" />
+    <option name="x" value="135" />
+    <option name="y" value="-10" />
+    <option name="width" value="1555" />
     <option name="height" value="1040" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -120,45 +170,37 @@
           <expand>
             <path>
               <item name="EmbeddedView" type="1abcf292:AndroidViewProjectNode" />
-              <item name="EmbeddedView" type="feadf853:AndroidModuleNode" />
+              <item name="EmbeddedView" type="e9137016:NonAndroidModuleNode" />
             </path>
             <path>
               <item name="EmbeddedView" type="1abcf292:AndroidViewProjectNode" />
-              <item name="EmbeddedView" type="feadf853:AndroidModuleNode" />
-              <item name="manifests" type="f94875db:AndroidManifestsGroupNode" />
+              <item name="EmbeddedView" type="e9137016:NonAndroidModuleNode" />
+              <item name="java" type="f7eae187:NonAndroidSourceTypeNode" />
             </path>
             <path>
               <item name="EmbeddedView" type="1abcf292:AndroidViewProjectNode" />
-              <item name="EmbeddedView" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="EmbeddedView" type="e9137016:NonAndroidModuleNode" />
+              <item name="java" type="f7eae187:NonAndroidSourceTypeNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="EmbeddedView" type="1abcf292:AndroidViewProjectNode" />
-              <item name="EmbeddedView" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="com" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="EmbeddedView" type="e9137016:NonAndroidModuleNode" />
+              <item name="java" type="f7eae187:NonAndroidSourceTypeNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="droneMaze" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="EmbeddedView" type="1abcf292:AndroidViewProjectNode" />
-              <item name="EmbeddedView" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="com" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="xr" type="462c0819:PsiDirectoryNode" />
+              <item name="EmbeddedView" type="e9137016:NonAndroidModuleNode" />
+              <item name="java" type="f7eae187:NonAndroidSourceTypeNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="uwb" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="EmbeddedView" type="1abcf292:AndroidViewProjectNode" />
-              <item name="EmbeddedView" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="com" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="xr" type="462c0819:PsiDirectoryNode" />
-              <item name="djiBridge" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="EmbeddedView" type="1abcf292:AndroidViewProjectNode" />
-              <item name="EmbeddedView" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="com" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="xr" type="462c0819:PsiDirectoryNode" />
+              <item name="EmbeddedView" type="e9137016:NonAndroidModuleNode" />
+              <item name="java" type="f7eae187:NonAndroidSourceTypeNode" />
               <item name="droneGame" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -169,15 +211,16 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
       <pane id="ProjectPane" />
       <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="android.project.structure.last.selected" value="SDK Location" />
     <property name="android.project.structure.proportion" value="0.15" />
     <property name="android.sdk.path" value="D:/Resources/Android/SDK" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Assets/DroneAPI/Plugin/djiBridge/DJIfrontEnd.java" />
     <property name="not.eligible.for.single.variant.sync" value="true" />
     <property name="settings.editor.selected.configurable" value="preferences.fileTypes" />
     <property name="show.do.not.ask.upgrade.gradle.plugin" value="3.2.0" />
@@ -308,12 +351,21 @@
     </task>
     <servers />
   </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-7" y="-7" width="1550" height="838" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.32995737" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.3295302" />
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Build Variants" order="4" side_tool="true" />
@@ -321,12 +373,15 @@
       <window_info id="Designer" order="6" />
       <window_info id="Resources Explorer" order="7" />
       <window_info id="Capture Tool" order="8" />
-      <window_info anchor="bottom" id="Version Control" order="0" />
-      <window_info anchor="bottom" id="Logcat" order="1" />
-      <window_info anchor="bottom" id="TODO" order="2" />
-      <window_info anchor="bottom" id="Terminal" order="3" />
+      <window_info anchor="bottom" id="Run" />
+      <window_info anchor="bottom" id="Find" />
+      <window_info anchor="bottom" id="Debug" />
+      <window_info anchor="bottom" id="Version Control" order="0" weight="0.3286119" />
+      <window_info anchor="bottom" id="Logcat" order="1" visible="true" weight="0.3286119" />
+      <window_info anchor="bottom" id="TODO" order="2" weight="0.3286119" />
+      <window_info anchor="bottom" id="Terminal" order="3" weight="0.3286119" />
       <window_info anchor="bottom" id="Event Log" order="4" side_tool="true" />
-      <window_info anchor="bottom" id="Build" order="5" visible="true" />
+      <window_info anchor="bottom" id="Build" order="5" weight="0.3286119" />
       <window_info anchor="bottom" id="Android Profiler" order="6" show_stripe_button="false" />
       <window_info anchor="right" id="Device File Explorer" order="0" side_tool="true" />
       <window_info anchor="right" id="Capture Analysis" order="1" />
@@ -336,21 +391,6 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="android-manifest" />
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="26" column="47" selection-start-line="26" selection-start-column="47" selection-end-line="26" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="57" column="19" selection-start-line="57" selection-start-column="19" selection-end-line="58" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gradle.properties">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -358,31 +398,89 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/droneGame/UnityDroneInterface.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/djiBridge/DJIfrontEnd.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/djiBridge/djiBackend.java" />
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="58" selection-start-line="58" selection-end-line="58" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/mainTemplate.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="708">
-          <caret line="54" column="37" lean-forward="true" selection-start-line="54" selection-start-column="37" selection-end-line="54" selection-end-column="37" />
+        <state>
+          <caret column="37" selection-start-column="37" selection-end-column="37" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/droneGame/UnityDroneInterface.java">
+    <entry file="file://$PROJECT_DIR$/src/main/AndroidManifest.xml">
+      <provider editor-type-id="android-manifest" />
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="21" column="16" lean-forward="true" selection-start-line="21" selection-start-column="16" selection-end-line="21" selection-end-column="16" />
+        <state>
+          <caret column="47" selection-start-column="47" selection-end-column="47" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/djiBridge/DJIfrontEnd.java">
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.dji/dji-sdk-provided/4.9/758419c4bfa58032a44220b2524b63fe661f59e9/dji-sdk-provided-4.9.jar!/dji/sdk/codec/DJICodecManager.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="174">
-          <caret line="576" column="138" selection-start-line="576" selection-start-column="135" selection-end-line="576" selection-end-column="138" />
+        <state relative-caret-position="149">
+          <caret line="59" column="16" selection-start-line="59" selection-start-column="16" selection-end-line="59" selection-end-column="16" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/djiBridge/djiBackend.java">
+    <entry file="jar://D:/sdk-tools-windows-4333796/platforms/android-28/android.jar!/android/os/Looper.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1632">
-          <caret line="146" column="25" selection-start-line="146" selection-start-column="25" selection-end-line="146" selection-end-column="25" />
+        <state relative-caret-position="51">
+          <caret line="11" column="19" selection-start-line="11" selection-start-column="19" selection-end-line="11" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://D:/sdk-tools-windows-4333796/platforms/android-28/android.jar!/android/app/Application.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="149">
+          <caret line="20" column="16" selection-start-line="20" selection-start-column="16" selection-end-line="20" selection-end-column="16" />
+          <folding>
+            <element signature="e#572#573#0" expanded="true" />
+            <element signature="e#623#624#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/projecttango/droneMaze/UnityPlayerActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1454">
+          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Assets/DroneAPI/Plugin/djiBridge/DJIfrontEnd.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="671" column="9" selection-start-line="671" selection-start-column="9" selection-end-line="671" selection-end-column="9" />
+          <folding>
+            <element signature="e#5123#5339#0" expanded="true" />
+            <element signature="e#5338#5339#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Assets/DroneAPI/Plugin/djiBridge/djiBackend.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="393" column="54" selection-start-line="393" selection-start-column="54" selection-end-line="393" selection-end-column="54" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3078#3079#0" expanded="true" />
+            <element signature="e#3317#3318#0" expanded="true" />
+            <element signature="e#4513#4514#0" expanded="true" />
+            <element signature="e#4565#4566#0" expanded="true" />
+            <element signature="class#5264:7460" />
+            <element signature="class#8215:8920" />
+            <element signature="e#10022#10023#0" expanded="true" />
+            <element signature="e#10059#10060#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

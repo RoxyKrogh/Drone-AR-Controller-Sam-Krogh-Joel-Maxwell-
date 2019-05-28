@@ -330,7 +330,8 @@ public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterfa
     @Override
     public void refreshConnectionStatus() {
         final BaseProduct mProduct = getProduct();
-        if (null != mProduct && mProduct.isConnected()) {
+
+        if (mProduct != null && mProduct.isConnected()) {
             Log.v(TAG, "refreshConnectionStatus: product connected");
             String str = mProduct instanceof Aircraft ? "DJIAircraft" : "DJIHandHeld";
             if (null != mProduct.getModel()) {
@@ -382,7 +383,6 @@ public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterfa
             djiBack = new djiBackend();
             djiBack.setContext(getApplication());
             djiBack.setUnityObject(mUnityPlayer);
-            //djiBack.setResultReceiver(rec);
             djiBack.onCreate();
 
             Log.d(TAG, "djiBackend created");
@@ -466,7 +466,7 @@ public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterfa
     // can be utilized to reduce system load when not streaming video from the drone
     //-------------------------------------
     public void disableVideo(){
-        if(null != djiBack){
+        if(djiBack != null){
             djiBack.disableVideo();
         }else {
             showToast("Drone connection not setup");
@@ -670,41 +670,9 @@ public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterfa
         }catch (Exception exc){
             Log.d(TAG, "Receiver not regestered. No Problem.");
         }
-        try{
-            djiBack.onTerminate();
-        }catch (Exception e){
-            Log.d(TAG, "Previewer not created.  No Problem.");
-        }
         super.onDestroy();
     }
 
-/*
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if(null != mUnityPlayer){ mUnityPlayer.pause();}
-    }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(null != mUnityPlayer){mUnityPlayer.resume();}
-    }
-
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if(null != mUnityPlayer){ mUnityPlayer.windowFocusChanged(hasFocus);}
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if(null != mUnityPlayer){mUnityPlayer.configurationChanged(newConfig);}
-    }
-*/
     //#############################################################################################
     // FLight Control Functions
     //#############################################################################################
@@ -729,7 +697,6 @@ public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterfa
                                 }
                             }
                         });
-                //genericCallback("", false));
             }
         }
     }
@@ -757,6 +724,7 @@ public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterfa
                     genericCallback("Virtual Sticks Disabled", true));
         }
     }
+
     //-------------------------------------
     // startSendingControl
     // Begins a timer task that relays the roll, pitch, yaw and throttle values to the drone.
@@ -769,6 +737,7 @@ public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterfa
             //showToast("Here:" + 8);
         }
     }
+
     //-------------------------------------
     // stopSendingControl
     // stops the timer task created with startSendingControl
@@ -778,8 +747,8 @@ public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterfa
         mSendVirtualStickDataTimer.cancel();
         mSendVirtualStickDataTimer.purge();
         mSendVirtualStickDataTimer = null;
-        //setVirtualControlActive(false); // circular call bad!
     }
+
     //-------------------------------------
     // setYaw
     // set's the speed at which the drone will rotate.
@@ -789,6 +758,7 @@ public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterfa
     public void setYaw(float val){
         mYaw = val;
     }
+
     //-------------------------------------
     // setRoll
     // controls the left/right motion of the drone.
@@ -798,6 +768,7 @@ public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterfa
     public void setRoll(float val){
         mRoll = val;
     }
+
     //-------------------------------------
     // setPitch
     // controls the forwards and backward motion of the drone
@@ -807,6 +778,7 @@ public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterfa
     public void setPitch(float val){
         mPitch = val;
     }
+
     //-------------------------------------
     //set Throttle
     // controls the vertical motion of the drone.
@@ -935,7 +907,6 @@ public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterfa
                         @Override
                         public void onProductConnect(BaseProduct baseProduct) {
                             setProduct(baseProduct);
-                            //baseProduct.setBaseProductListener(mDJIBaseProductListener);
                             notifyStatusChange();
                         }
 
@@ -949,19 +920,7 @@ public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterfa
         }
     }
 
-    /*private BaseProduct.BaseProductListener mDJIBaseProductListener = new BaseProduct.BaseProductListener() {
-        @Override
-        public void onComponentChange(BaseProduct.ComponentKey key, BaseComponent oldComponent, BaseComponent newComponent) {
-            if(newComponent != null) {
-                newComponent.setComponentListener(mDJIComponentListener);
-            }
-            notifyStatusChange();
-        }
-        @Override
-        public void onConnectivityChange(boolean isConnected) {
-            notifyStatusChange();
-        }
-    };*/
+
     private BaseComponent.ComponentListener mDJIComponentListener = new BaseComponent.ComponentListener() {
         @Override
         public void onConnectivityChange(boolean isConnected) {
