@@ -9,10 +9,15 @@ public class DroneBridge : MonoBehaviour
     //private string[] buttons = new string[] { "A", "B", "X", "Y", "R1", "R2", "L1", "L2", "L3", "R3", "START", "BACK" };
     //private float maxYaw, maxThrottle, maxPitch, maxRoll;
     private static bool controlEnabled = false;
+    public Transform phoneView; // object that is tracked to the phone's location
+
+    private bool frameReady, phoneLocReady, droneLocReady, droneAttReady;
+    private Location phoneLoc, droneLoc, droneAtt;
+    public Texture2D videoFeedOut;
 
     public class Location
     {
-        public Location(double[] xyz)
+        public Location(params double[] xyz)
         {
             this.xyz = xyz;
         }
@@ -29,16 +34,63 @@ public class DroneBridge : MonoBehaviour
         {
             return xyz == null ? "Loc(null)" : "Loc("+X+","+Y+","+Z+")";
         }
+
+        /// <summary>
+        /// Convert latitude/longitude to meters
+        /// </summary>
+        /// <returns>Vector3(X,Z,Y)</returns>
+        public Vector3 Coordinate2Meters()
+        {
+            float r = 40007860f; // circumference of Earth in meters
+            float latScale = (r / 2) / 180;  // latitude from 0 (North pole) to 180 (South pole)
+            float longiScale = r / 360; // longitude from 0 to 360
+            float lat =(float) X * latScale;
+            float longi = (float)Y * longiScale;
+            return new Vector3(lat,(float)Z,longi);
+        }
+
+        public Quaternion ToRotation()
+        {
+            return Quaternion.Euler((float)X,(float)Y,(float)Z);
+        }
+        
+        public static Location operator +(Location loc1, Location loc2)
+        {
+            return new Location(loc1.X + loc2.X, loc1.Y + loc2.Y, loc1.Z + loc2.Z);
+        }
+
+        public static Location operator -(Location loc1, Location loc2)
+        {
+            return new Location(loc1.X - loc2.X, loc1.Y - loc2.Y, loc1.Z - loc2.Z);
+        }
     }
+
+    // UNITY FUNCTIONS:
 
     private void Start()
     {
+        videoFeedOut = new Texture2D(960, 720);
+    }
+
+    private void Update()
+    {
+        if (frameReady && videoFeedOut != null)
+            GetVideoFrame(videoFeedOut);
+        if (phoneLocReady) // phone location ready
+            phoneLoc = new Location(CallDroneFunc<double[]>("getPhoneLocation"));
+        if (droneLocReady)
+            droneLoc = new Location(CallDroneFunc<double[]>("getDroneLocation"));
+        if (droneAttReady)
+            droneAtt = new Location(CallDroneFunc<double[]>("getDroneAttitude"));
     }
 
     private void OnEnable()
     {
         VirtualControlEnabled = controlEnabled;
+        CallVoidDroneFunc("registerUnityBridge", gameObject.name);
     }
+
+    // C# TO JAVA:
 
     public void RefreshConnectionStatus()
     {
@@ -84,7 +136,7 @@ public class DroneBridge : MonoBehaviour
     {
         get
         {
-            return new Location(CallDroneFunc<double[]>("getDroneAttitude"));
+            return droneAtt ?? new Location(0, 0, 0);
         }
     }
 
@@ -92,7 +144,7 @@ public class DroneBridge : MonoBehaviour
     {
         get
         {
-            return new Location(CallDroneFunc<double[]>("getDroneLocation"));
+            return droneLoc ?? (PhoneLocation + new Location(0, 0, 10));
         }
     }
 
@@ -120,7 +172,7 @@ public class DroneBridge : MonoBehaviour
     {
         get
         {
-            return new Location(CallDroneFunc<double[]>("getFlightMode"));
+            return (phoneLoc ?? new Location(0, 0, 0)); // use 0 location if not receiving location from java
         }
     }
 
@@ -213,8 +265,9 @@ public class DroneBridge : MonoBehaviour
             {
 #if UNITY_EDITOR
                 Debug.Log("Calling drone function: " + funcName + "()");
-#endif
+#else
                 obj_Activity.Call(funcName);
+#endif
             }
         }
     }
@@ -229,8 +282,9 @@ public class DroneBridge : MonoBehaviour
 #if UNITY_EDITOR
                 string argsStr = string.Join(", ", args.Select(a => a.ToString() ?? "null").ToArray());
                 Debug.Log("Calling drone function: " + funcName + "(" + argsStr + ")");
-#endif
+#else
                 obj_Activity.Call(funcName, args);
+#endif
             }
         }
     }
@@ -243,8 +297,10 @@ public class DroneBridge : MonoBehaviour
             {
 #if UNITY_EDITOR
                 Debug.Log("Calling drone function: " + funcName + "()");
-#endif
+                return default(T);
+#else
                 return obj_Activity.Call<T>(funcName);
+#endif
             }
         }
     }
@@ -258,8 +314,10 @@ public class DroneBridge : MonoBehaviour
 #if UNITY_EDITOR
                 string argsStr = string.Join(", ", args.Select(a => a.ToString() ?? "null").ToArray());
                 Debug.Log("Calling drone function: " + funcName + "(" + argsStr + ")");
-#endif
+                return default(T);
+#else
                 return obj_Activity.Call<T>(funcName, args);
+#endif
             }
         }
     }
@@ -269,6 +327,34 @@ public class DroneBridge : MonoBehaviour
         AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
         AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
         return obj_Activity;
+    }
+
+    // FROM JAVA TO C#:
+
+    public void SetReady(string tags)
+    {
+        foreach (string tag in tags.Split(' '))
+        {
+            switch (tag)
+            {
+                case "VIDEO":
+                    // frame ready
+                    frameReady = true;
+                    break;
+                case "PHONE_LOC":
+                    // phone location ready
+                    phoneLocReady = true; 
+                    break;
+                case "DRONE_LOC":
+                    // drone location ready
+                    droneLocReady = true;
+                    break;
+                case "DRONE_ATT":
+                    // drone attitude ready
+                    droneAttReady = true;
+                    break;
+            }
+        }
     }
 
 }

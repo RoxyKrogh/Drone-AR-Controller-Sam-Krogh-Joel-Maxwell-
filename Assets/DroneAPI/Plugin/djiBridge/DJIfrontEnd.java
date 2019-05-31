@@ -68,7 +68,7 @@ import dji.thirdparty.rx.Subscription;
 import dji.thirdparty.rx.schedulers.Schedulers;
 
 
-public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterface {
+public class DJIfrontEnd extends UnityDroneActivity {
 
     // DJI Required -----------------------
     private static final String TAG = DJIfrontEnd.class.getName();
@@ -229,6 +229,8 @@ public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterfa
 
             droneAttitude = new double[] {st.getAttitude().pitch, st.getAttitude().roll, st.getAttitude().yaw};
             state += "| Attitude: " + Arrays.toString(droneAttitude);
+
+            setReady(DRONE_LOC_READY, DRONE_ATT_READY);
         } else {
             Log.d(TAG, "flightControllerStatus: NULL");
         }
@@ -346,6 +348,16 @@ public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterfa
             connectionStatus = "No Product Connected";
         }
         Log.d(TAG, "refreshConnectionStatus: " + connectionStatus);
+    }
+
+    @Override
+    public void followMeStart() {
+        Log.v(TAG,"No implementation for followMeStart()");
+    }
+
+    @Override
+    public void followMeStop() {
+        Log.v(TAG,"No implementation for followMeStop()");
     }
 
     //-------------------------------------
@@ -489,7 +501,7 @@ public class DJIfrontEnd extends UnityDroneActivity implements UnityDroneInterfa
                 public void onLocationChanged(Location location) {
                     movingObjectLocation = new LocationCoordinate2D(location.getLatitude(), location.getLongitude());
                     movingObjectBearing = location.getBearing();
-                    UnityPlayer.UnitySendMessage(DRONE_OBJ, "locationUpdate","");
+                    setReady(PHONE_LOC_READY);
                 }
 
                 @Override

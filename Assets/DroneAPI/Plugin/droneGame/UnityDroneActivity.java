@@ -4,12 +4,23 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Debug;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
-public class UnityDroneActivity extends UnityPlayerActivity implements UnityDroneInterface {
+import com.unity3d.player.UnityPlayer;
+
+public abstract class UnityDroneActivity extends UnityPlayerActivity implements UnityDroneInterface {
+
+    private static String UNITY_BRIDGE_OBJECT = "DroneCanvas";
+    public static final String FRAME_READY = "VIDEO",
+                                PHONE_LOC_READY = "PHONE_LOC",
+                                DRONE_LOC_READY = "DRONE_LOC",
+                                DRONE_ATT_READY = "DRONE_ATT";
+
     private static final String TAG = UnityDroneActivity.class.getName();
+
     // Declare overrides to all methods of UnityPlayerActivity
     @Override protected void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); }
     @Override protected void onNewIntent(Intent intent) { super.onNewIntent(intent); }
@@ -28,155 +39,15 @@ public class UnityDroneActivity extends UnityPlayerActivity implements UnityDron
     @Override public boolean onTouchEvent(MotionEvent event)          { return super.onTouchEvent(event); }
     @Override public boolean onGenericMotionEvent(MotionEvent event)  { return super.onGenericMotionEvent(event); }
 
-
-    @Override
-    public String getConnectionStatus() {
-        Log.v(TAG, "getConnectionStatus()");
-        return "TEST_CONNECTION_STATUS";
+    // Called by Unity to set the name of the object holding DroneBridge
+    public final void registerUnityBridge(String objectName) {
+        UNITY_BRIDGE_OBJECT = objectName;
     }
 
-    @Override
-    public double[] getDroneAttitude() {
-        Log.v(TAG, "getDroneAttitude()");
-        return new double[] { 0, 0, 0 };
-    }
+    // JAVA -> C#:
 
-    @Override
-    public String getProductText() {
-        Log.v(TAG, "getProductText()");
-        return "TEST_PRODUCT_TEXT";
-    }
-
-    @Override
-    public String getState() {
-        Log.v(TAG, "getState()");
-        return "TEST_STATE";
-    }
-
-    @Override
-    public byte[] getVideoFrame() {
-        Log.v(TAG, "getVideoFrame()");
-        return new byte[0];
-    }
-
-    @Override
-    public double[] getPhoneLocation() {
-        Log.v(TAG, "getPhoneLocation()");
-        return new double[] { 0, 0, 0};
-    }
-
-    @Override
-    public double[] getDroneLocation() {
-        Log.v(TAG, "getDroneLocation()");
-        return new double[] { 0, 0, 0};
-    }
-
-    @Override
-    public String getFlightMode() {
-        Log.v(TAG, "getFlightMode()");
-        return "TEST_FLIGHT_MODE";
-    }
-
-    @Override
-    public String getIMUstate() {
-        Log.v(TAG, "getIMUstate()");
-        return "TEST_IMU_STATE";
-    }
-
-    @Override
-    public boolean getIsFlying() {
-        Log.v(TAG, "getIsFlying()");
-        return false;
-    }
-
-    @Override
-    public boolean getMotorsOn() {
-        Log.v(TAG, "getMotorsOn()");
-        return false;
-    }
-
-    @Override
-    public void refreshConnectionStatus() {
-        Log.v(TAG, "refreshConnectionStatus()");
-    }
-
-    @Override
-    public void refreshFlightControllerStatus() {
-        Log.v(TAG, "refreshFlightControllerStatus()");
-    }
-
-    @Override
-    public void setupDroneConnection() {
-        Log.v(TAG, "setupDroneConnection()");
-    }
-
-    @Override
-    public void takeOff() {
-        Log.v(TAG, "takeOff()");
-    }
-
-    @Override
-    public void land() {
-        Log.v(TAG, "land()");
-    }
-
-    @Override
-    public void followMeStart() {
-        Log.v(TAG, "followMeStart()");
-    }
-
-    @Override
-    public void followMeStop() {
-        Log.v(TAG, "followMeStop()");
-    }
-
-    @Override
-    public void startLocationService() {
-        Log.v(TAG, "startLocationService()");
-    }
-
-    @Override
-    public void showToast(String message) {
-        Log.v(TAG, "showToast(" + message + ")");
-    }
-
-    @Override
-    public void setVirtualControlActive(boolean active) {
-        Log.v(TAG, "setVirtualControlActive(" + active + ")");
-    }
-
-    @Override
-    public void setYaw(float val) {
-        Log.v(TAG, "setYaw(" + val + ")");
-    }
-
-    @Override
-    public void setRoll(float val) {
-        Log.v(TAG, "setRoll(" + val + ")");
-    }
-
-    @Override
-    public void setPitch(float val) {
-        Log.v(TAG, "setPitch(" + val + ")");
-    }
-
-    @Override
-    public void setThrottle(float val) {
-        Log.v(TAG, "setThrottle(" + val + ")");
-    }
-
-    @Override
-    public void disableVideo() {
-        Log.v(TAG, "disableVideo()");
-    }
-
-    @Override
-    public void enableVideo() {
-        Log.v(TAG, "enableVideo()");
-    }
-
-    @Override
-    public void setGimbalRotation(float pitchValue, float rollValue) {
-        Log.v(TAG, "setGimbalRotation(" + pitchValue + ", " + rollValue + ")");
+    public final void setReady(String... tags) {
+        String param = TextUtils.join(" ", tags);
+        UnityPlayer.UnitySendMessage(UNITY_BRIDGE_OBJECT, "SetReady", param);
     }
 }

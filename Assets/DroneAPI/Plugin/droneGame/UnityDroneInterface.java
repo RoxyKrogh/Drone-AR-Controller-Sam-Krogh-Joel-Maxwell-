@@ -1,6 +1,7 @@
 package com.uwb.xr.droneGame;
 
 public interface UnityDroneInterface {
+    // C# -> JAVA:
     void refreshConnectionStatus();
     void followMeStart();
     void followMeStop();

@@ -63,37 +63,5 @@ public class droneCameraPlaneControl : MonoBehaviour {
             droneViewPlane.transform.localPosition = new Vector3(0, 0, droneCamera.transform.position.y + 6);
             droneViewPlane.transform.localScale = new Vector3(frustumWidthD / 10, 1, frustumHeightD / 10);
         }
-
-
-
-
-
-        
-        
-
-        //int phoneViewStandoff = 300;
-        //float frustumHeightP = 2.0f * (phoneCamera.transform.position.z + phoneViewStandoff ) * Mathf.Tan(phoneCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
-        //float frustumWidthP = frustumHeightP * phoneCamera.aspect;
-
-
-        //phoneViewPlane.transform.localPosition = new Vector3(0,0, phoneCamera.transform.position.z + phoneViewStandoff);
-
-
-        //phoneViewPlane.transform.localScale = new Vector3(frustumWidthP / 10, 1, frustumHeightP / 10);
-        if (Application.isMobilePlatform)
-        {
-            double[] loc;
-            using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-            {
-                using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
-                {
-                    loc = obj_Activity.Call<double[]>("getDroneLocation");
-                }
-            }
-            if(loc[2] != 0)
-            {
-                holder.transform.position = new Vector3(holder.transform.position.x, (float)loc[2], holder.transform.position.z);
-            }
-        }
     }
 }
