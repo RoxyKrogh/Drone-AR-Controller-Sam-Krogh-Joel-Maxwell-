@@ -3,17 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[DisallowMultipleComponent]
 public class DroneBridge : MonoBehaviour
 {
     // Joystick Buttons
     //private string[] buttons = new string[] { "A", "B", "X", "Y", "R1", "R2", "L1", "L2", "L3", "R3", "START", "BACK" };
     //private float maxYaw, maxThrottle, maxPitch, maxRoll;
     private static bool controlEnabled = false;
-    public Transform phoneView; // object that is tracked to the phone's location
 
     private bool frameReady, phoneLocReady, droneLocReady, droneAttReady;
     private Location phoneLoc, droneLoc, droneAtt;
-    public Texture2D videoFeedOut;
+    private Texture2D videoFeedOut;
+    private DroneView droneView;
+
+    [SerializeField]
+    private Camera phoneView; // object that is tracked to the phone's location
+    public Material videoFeedDisplay;
 
     public class Location
     {
@@ -65,17 +70,49 @@ public class DroneBridge : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Get the instance of DroneBridge running in the active scene.
+    /// </summary>
+    /// <returns>A reference to a DroneBridge.</returns>
+    public static DroneBridge GetReference()
+    {
+        return FindObjectOfType<DroneBridge>();
+    }
+
+    private static bool TooManyBridges { get { return FindObjectsOfType<DroneBridge>().Length > 1; } } // no more than 1 DroneBridge per scene
+    private static DroneBridge WorstBridge
+    {
+        get
+        {
+            DroneBridge[] bridges = FindObjectsOfType<DroneBridge>();
+            int ping = bridges.Length;
+            foreach (DroneBridge b in bridges)
+            {
+                if (b.videoFeedDisplay == null || b.phoneView == null || ping == 0) 
+                    return b; // return least defined DroneBridge, or last DroneBridge
+                ping--;
+            }
+            return null; // no bridges
+        }
+    }
+
     // UNITY FUNCTIONS:
+    
+    void OnValidate()
+    {
+        Debug.Assert(!TooManyBridges, "Scene may only contain 1 instance of DroneBridge",this);
+    }
 
     private void Start()
     {
         videoFeedOut = new Texture2D(960, 720);
+        droneView = FindObjectOfType<DroneView>();
     }
 
     private void Update()
     {
         if (frameReady && videoFeedOut != null)
-            GetVideoFrame(videoFeedOut);
+            GetVideoFrame(videoFeedDisplay);
         if (phoneLocReady) // phone location ready
             phoneLoc = new Location(CallDroneFunc<double[]>("getPhoneLocation"));
         if (droneLocReady)
@@ -92,6 +129,11 @@ public class DroneBridge : MonoBehaviour
 
     // C# TO JAVA:
 
+    public bool IsConnected
+    {
+        get { return droneLoc != null; } // TODO: replace with actual connection status query
+    }
+    
     public void RefreshConnectionStatus()
     {
         CallVoidDroneFunc("refreshConnectionStatus");
@@ -176,6 +218,11 @@ public class DroneBridge : MonoBehaviour
         }
     }
 
+    public Transform PhoneView
+    {
+        get { return phoneView.transform; }
+    }
+
     public string ProductText
     {
         get { return CallDroneFunc<string>("getProductText"); }
@@ -186,13 +233,17 @@ public class DroneBridge : MonoBehaviour
         get { return CallDroneFunc<string>("getState"); }
     }
 
-    public bool GetVideoFrame(Texture2D tex2d)
+    public bool GetVideoFrame(Material surface)
     {
         byte[] frame = CallDroneFunc<byte[]>("getVideoFrame");
         if (frame != null)
         {
-            tex2d.LoadImage(frame);
-            tex2d.Apply();
+            videoFeedOut.LoadImage(frame);
+            videoFeedOut.Apply();
+            if (surface != null)
+            {
+                surface.mainTexture = videoFeedOut;
+            }
         }
         return frame != null;
     }
@@ -210,11 +261,17 @@ public class DroneBridge : MonoBehaviour
     public void SetGimbalRotation(float pitchValue, float rollValue)
     {
         CallVoidDroneFunc("setGimbalRotation", pitchValue, rollValue);
+        droneView.CameraPitch = pitchValue;
     }
 
     public float Yaw
     {
-        set { CallVoidDroneFunc("setYaw", value); }
+        set
+        {
+            CallVoidDroneFunc("setYaw", value);
+            if (!IsConnected)
+                droneView.Yaw = value;
+        }
     }
 
     public float Pitch

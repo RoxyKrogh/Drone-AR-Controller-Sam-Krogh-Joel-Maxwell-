@@ -7,11 +7,9 @@ using UnityEngine.Events;
 public class DroneControl : MonoBehaviour
 {
     public UnityEvent swapVideoEvent;
-    public Transform droneHolder;
-    public Transform droneCamera;
     public bool controlEnabled = true;
 
-    private DroneBridge controller;
+    private DroneBridge bridge;
     private float roll, pitch, yaw, throttle;
     private float maxYaw, maxThrottle, maxPitch, maxRoll;
     private string[] buttons = new string[] { "A", "B", "X", "Y", "R1", "R2", "L1", "L2", "L3", "R3", "START", "BACK" };
@@ -32,7 +30,7 @@ public class DroneControl : MonoBehaviour
 
     private void OnEnable()
     {
-        controller = GetComponent<DroneBridge>();
+        bridge = GetComponent<DroneBridge>();
     }
 
     // Update is called once per frame
@@ -55,48 +53,46 @@ public class DroneControl : MonoBehaviour
             if (Mathf.Abs(RJV) >= 0.1f)
             {
                 throttle = maxThrottle * -RJV;
-                controller.Throttle = throttle;
+                bridge.Throttle = throttle;
             }
             else
             {
                 throttle = 0;
-                controller.Throttle = throttle;
+                bridge.Throttle = throttle;
             }
             if (Mathf.Abs(RJH) >= 0.1f)
             {
                 yaw = maxYaw * RJH;
-                controller.Yaw = yaw;
-                droneCamera.transform.Rotate(0, 0, Time.deltaTime * yaw);
-                droneCamera.transform.Rotate(0, 0, Time.deltaTime * yaw);
+                bridge.Yaw = yaw;
             }
             else
             {
                 yaw = 0;
-                controller.Yaw = yaw;
+                bridge.Yaw = yaw;
 
             }
             if (Mathf.Abs(LJH) >= 0.1f)
             {
                 pitch = LJH * maxPitch;
-                controller.Pitch = pitch;
-                droneHolder.transform.Translate(Time.deltaTime * pitch, 0, 0);
+                bridge.Pitch = pitch;
+                //droneHolder.transform.Translate(Time.deltaTime * pitch, 0, 0);
 
             }
             else
             {
                 pitch = 0;
-                controller.Pitch = pitch;
+                bridge.Pitch = pitch;
             }
             if (Mathf.Abs(LJV) >= 0.1f)
             {
                 roll = maxRoll * -LJV;
-                controller.Roll = roll;
-                droneHolder.transform.Translate(0, 0, Time.deltaTime * roll);
+                bridge.Roll = roll;
+                //droneHolder.transform.Translate(0, 0, Time.deltaTime * roll);
             }
             else
             {
                 roll = 0;
-                controller.Roll = roll;
+                bridge.Roll = roll;
             }
             if (Input.GetButtonDown("B"))
             {
@@ -107,25 +103,25 @@ public class DroneControl : MonoBehaviour
                 if (Input.GetButtonDown("Y"))
                 {
                     Debug.Log("take off buttons!");
-                    controller.TakeOff();
+                    bridge.TakeOff();
                 }
                 if (Input.GetButtonDown("A"))
                 {
                     Debug.Log("Landing buttons!");
-                    controller.Land();
+                    bridge.Land();
                 }
             }
 
             if (!Input.GetButton("L1") && Input.GetButton("R1"))
             {
                 Debug.Log("Gimbal down");
-                controller.SetGimbalRotation(-90f, 0f);
+                bridge.SetGimbalRotation(-90f, 0f);
             }
 
             if (Input.GetButton("L1") && !Input.GetButton("R1"))
             {
                 Debug.Log("Gimbal up");
-                controller.SetGimbalRotation(0f, 0f);
+                bridge.SetGimbalRotation(0f, 0f);
             }
 
         }

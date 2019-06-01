@@ -226,7 +226,7 @@ public class droneMaze : MonoBehaviour
 
     void updateDisplay()
     {
-        if (drone_camera_flag )
+        /*if (drone_camera_flag )
         {
             if (frame_ready_flag)
             {
@@ -242,7 +242,7 @@ public class droneMaze : MonoBehaviour
         else
         {
             droneDisplay.GetComponent<Renderer>().material.mainTexture = noVideo;
-        }
+        }*/
         if ( phone_camera_flag )
         {
             //if (webTex.isPlaying == false) { webTex.Play(); }
