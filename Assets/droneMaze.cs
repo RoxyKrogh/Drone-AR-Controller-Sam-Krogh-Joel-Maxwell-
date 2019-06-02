@@ -55,9 +55,9 @@ public class droneMaze : MonoBehaviour
     private bool phone_camera_flag;
     private bool calc_distance_flag;
     private bool droneRender;
-    private DroneBridge.Location baseLoc;
-    private DroneBridge.Location phoneLoc;
-    private DroneBridge.Location droneLoc;
+    private DroneBridge.DroneVector baseLoc;
+    private DroneBridge.DroneVector phoneLoc;
+    private DroneBridge.DroneVector droneLoc;
 
     // Drone Camera
     private Texture2D tex2d;

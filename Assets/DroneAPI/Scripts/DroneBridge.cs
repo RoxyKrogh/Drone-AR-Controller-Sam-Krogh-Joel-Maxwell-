@@ -12,7 +12,7 @@ public class DroneBridge : MonoBehaviour
     private static bool controlEnabled = false;
 
     private bool frameReady, phoneLocReady, droneLocReady, droneAttReady;
-    private Location phoneLoc, droneLoc, droneAtt;
+    private DroneVector phoneLoc, droneLoc, droneAtt;
     private Texture2D videoFeedOut;
     private DroneView droneView;
 
@@ -20,16 +20,24 @@ public class DroneBridge : MonoBehaviour
     private Camera phoneView; // object that is tracked to the phone's location
     public Material videoFeedDisplay;
 
-    public class Location
+    /// <summary>
+    /// A vector of doubles returned by some Drone api properties. 
+    /// Usually there are 3 elements in the vector, either (latitude,longitude,altitude) or (pitch,roll,yaw)
+    /// </summary>
+    public class DroneVector
     {
-        public Location(params double[] xyz)
+        public DroneVector(params double[] xyz)
         {
             this.xyz = xyz;
         }
         private double[] xyz;
-        public double X { get { return xyz[0]; } set { xyz[0] = value; } }
-        public double Y { get { return xyz[1]; } set { xyz[1] = value; } }
-        public double Z { get { return xyz[2]; } set { xyz[2] = value; } }
+        public double Latitude { get { return xyz[0]; } set { xyz[0] = value; } }
+        public double Longitude { get { return xyz[1]; } set { xyz[1] = value; } }
+        public double Altitude { get { return xyz[2]; } set { xyz[2] = value; } }
+
+        public double Pitch { get { return xyz[0]; } set { xyz[0] = value; } }
+        public double Roll { get { return xyz[1]; } set { xyz[1] = value; } }
+        public double Yaw { get { return xyz[2]; } set { xyz[2] = value; } }
         public double this[int i]
         {
             get { return xyz[i]; }
@@ -37,7 +45,7 @@ public class DroneBridge : MonoBehaviour
         }
         public override string ToString()
         {
-            return xyz == null ? "Loc(null)" : "Loc("+X+","+Y+","+Z+")";
+            return xyz == null ? "Loc(null)" : "Loc("+string.Join(",",xyz)+")";
         }
 
         /// <summary>
@@ -49,24 +57,25 @@ public class DroneBridge : MonoBehaviour
             float r = 40007860f; // circumference of Earth in meters
             float latScale = (r / 2) / 180;  // latitude from 0 (North pole) to 180 (South pole)
             float longiScale = r / 360; // longitude from 0 to 360
-            float lat =(float) X * latScale;
-            float longi = (float)Y * longiScale;
-            return new Vector3(lat,(float)Z,longi);
+            float lat = (float)Latitude * latScale;
+            float longi = (float)Longitude * longiScale;
+            float alti = (float)Altitude;
+            return new Vector3(lat,alti,longi);
         }
 
         public Quaternion ToRotation()
         {
-            return Quaternion.Euler((float)X,(float)Y,(float)Z);
+            return Quaternion.Euler((float)Pitch,(float)Yaw,(float)Roll); 
         }
         
-        public static Location operator +(Location loc1, Location loc2)
+        public static DroneVector operator +(DroneVector loc1, DroneVector loc2)
         {
-            return new Location(loc1.X + loc2.X, loc1.Y + loc2.Y, loc1.Z + loc2.Z);
+            return new DroneVector(loc1.Latitude + loc2.Latitude, loc1.Longitude + loc2.Longitude, loc1.Altitude + loc2.Altitude);
         }
 
-        public static Location operator -(Location loc1, Location loc2)
+        public static DroneVector operator -(DroneVector loc1, DroneVector loc2)
         {
-            return new Location(loc1.X - loc2.X, loc1.Y - loc2.Y, loc1.Z - loc2.Z);
+            return new DroneVector(loc1.Latitude - loc2.Latitude, loc1.Longitude - loc2.Longitude, loc1.Altitude - loc2.Altitude);
         }
     }
 
@@ -112,13 +121,25 @@ public class DroneBridge : MonoBehaviour
     private void Update()
     {
         if (frameReady && videoFeedOut != null)
+        {
             GetVideoFrame(videoFeedDisplay);
+            frameReady = false;
+        }
         if (phoneLocReady) // phone location ready
-            phoneLoc = new Location(CallDroneFunc<double[]>("getPhoneLocation"));
+        {
+            phoneLoc = new DroneVector(CallDroneFunc<double[]>("getPhoneLocation"));
+            phoneLocReady = false;
+        }
         if (droneLocReady)
-            droneLoc = new Location(CallDroneFunc<double[]>("getDroneLocation"));
+        {
+            droneLoc = new DroneVector(CallDroneFunc<double[]>("getDroneLocation"));
+            droneLocReady = false;
+        }
         if (droneAttReady)
-            droneAtt = new Location(CallDroneFunc<double[]>("getDroneAttitude"));
+        {
+            droneAtt = new DroneVector(CallDroneFunc<double[]>("getDroneAttitude"));
+            droneAttReady = false;
+        }
     }
 
     private void OnEnable()
@@ -175,19 +196,19 @@ public class DroneBridge : MonoBehaviour
         get { return CallDroneFunc<string>("getConnectionStatus"); }
     }
 
-    public Location DroneAttitude
+    public DroneVector DroneAttitude
     {
         get
         {
-            return droneAtt ?? new Location(0, 0, 0);
+            return droneAtt ?? new DroneVector(0, 0, 0);
         }
     }
 
-    public Location DroneLocation
+    public DroneVector DroneLocation
     {
         get
         {
-            return droneLoc ?? (PhoneLocation + new Location(0, 0, 10));
+            return droneLoc ?? (PhoneLocation + new DroneVector(0, 0, 10));
         }
     }
 
@@ -198,7 +219,7 @@ public class DroneBridge : MonoBehaviour
 
     public string IMUState
     {
-        get { return CallDroneFunc<string>("getIMUState"); }
+        get { return CallDroneFunc<string>("getIMUstate"); }
     }
 
     public bool IsFlying
@@ -211,11 +232,11 @@ public class DroneBridge : MonoBehaviour
         get { return CallDroneFunc<bool>("getMotorsOn"); }
     }
 
-    public Location PhoneLocation
+    public DroneVector PhoneLocation
     {
         get
         {
-            return (phoneLoc ?? new Location(0, 0, 0)); // use 0 location if not receiving location from java
+            return (phoneLoc ?? new DroneVector(0, 0, 0)); // use 0 location if not receiving location from java
         }
     }
 
@@ -265,6 +286,10 @@ public class DroneBridge : MonoBehaviour
         droneView.CameraPitch = pitchValue;
     }
 
+    /// <summary>
+    /// The yaw of the drone. 
+    /// Caution: this property is handled by the Java api, and changes to it's value may not be immediately visible.
+    /// </summary>
     public float Yaw
     {
         set
@@ -273,16 +298,27 @@ public class DroneBridge : MonoBehaviour
             if (!IsConnected)
                 droneView.Yaw = value;
         }
+        get { return (float)DroneAttitude.Yaw; }
     }
 
+    /// <summary>
+    /// The pitch of the drone. 
+    /// Caution: this property is handled by the Java api, and changes to it's value may not be immediately visible.
+    /// </summary>
     public float Pitch
     {
         set { CallVoidDroneFunc("setPitch", value); }
+        get { return (float)DroneAttitude.Pitch; }
     }
 
+    /// <summary>
+    /// The roll of the drone. 
+    /// Caution: this property is handled by the Java api, and changes to it's value may not be immediately visible.
+    /// </summary>
     public float Roll
     {
         set { CallVoidDroneFunc("setRoll", value); }
+        get { return (float)DroneAttitude.Roll; }
     }
 
     public void SetupDroneConnection()
