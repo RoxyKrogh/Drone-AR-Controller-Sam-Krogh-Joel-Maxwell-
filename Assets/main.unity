@@ -7097,7 +7097,7 @@ MonoBehaviour:
   FirstPersonCamera: {fileID: 1442232256}
   DetectedPlanePrefab: {fileID: 1654175882956584, guid: 6a35c744e5010405c847fad90282d2be,
     type: 3}
-  MazeHolder: {fileID: 890949999}
+  m_MazeHolder: {fileID: 890949999}
 --- !u!1 &897086874
 GameObject:
   m_ObjectHideFlags: 0

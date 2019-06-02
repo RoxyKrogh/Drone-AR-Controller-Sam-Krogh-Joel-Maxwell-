@@ -26,7 +26,7 @@ public class attachToPlane : MonoBehaviour {
     /// <summary>
     /// A model to place when a raycast from a user touch hits a plane.
     /// </summary>
-    public Transform MazeHolder;
+    public Transform m_MazeHolder;
 
     /// <summary>
     /// The rotation in degrees need to apply to model when the Andy model is placed.
@@ -47,25 +47,30 @@ public class attachToPlane : MonoBehaviour {
         _UpdateApplicationLifecycle();
 
         // If the player has not touched the screen, we are done with this update.
+        // Also should not handle input if the player is pointing on UI.
         Touch touch;
-        if (Input.touchCount < 1 || (touch = Input.GetTouch(0)).phase != TouchPhase.Began)
+        if (Input.touchCount < 1 || (touch = Input.GetTouch(0)).phase != TouchPhase.Began || EventSystem.current.IsPointerOverGameObject(touch.fingerId))
         {
-            return;
+            if (m_MazeHolder.transform.parent == null) // if maze is not yet anchored
+                BindToSurface(Screen.width / 2, Screen.height / 2);
         }
+        else
+        {
+            BindToSurface(touch.position.x, touch.position.y);
+        }
+    }
 
-        // Should not handle input if the player is pointing on UI.
-        if (EventSystem.current.IsPointerOverGameObject(touch.fingerId))
-        {
-            return;
-        }
+    void BindToSurface(float screenX, float screenY)
+    {
 
         // Raycast against the location the player touched to search for planes.
         TrackableHit hit;
         TrackableHitFlags raycastFilter = TrackableHitFlags.PlaneWithinPolygon |
             TrackableHitFlags.FeaturePointWithSurfaceNormal;
 
-        if (Frame.Raycast(touch.position.x, touch.position.y, raycastFilter, out hit))
+        if (Frame.Raycast(screenX, screenY, raycastFilter, out hit))
         {
+            _ShowAndroidToastMessage(screenX + " " + screenY);
             // Use hit pose and camera pose to check if hittest is from the
             // back of the plane, if it is, no need to create the anchor.
             if ((hit.Trackable is DetectedPlane) &&
@@ -78,22 +83,30 @@ public class attachToPlane : MonoBehaviour {
             {
                 // Choose the Andy model for the Trackable that got hit.
                 GameObject prefab;
-                if (hit.Trackable is FeaturePoint)
+                if (hit.Trackable is DetectedPlane)
                 {
-                    return;
+                    var plane = (DetectedPlane)hit.Trackable;
+                    if (plane.PlaneType != DetectedPlaneType.HorizontalUpwardFacing)
+                        return;
+                    if (plane.TrackingState != TrackingState.Tracking)
+                        return;
+
+                    // Compensate for the hitPose rotation facing away from the raycast (i.e.
+                    // camera).
+                    //andyObject.transform.Rotate(0, k_ModelRotation, 0, Space.Self);
+
+                    // Create an anchor to allow ARCore to track the hitpoint as understanding of
+                    // the physical world evolves.
+                    
+                    var anchor = hit.Trackable.CreateAnchor(hit.Pose);
+
+                    // Make maze a child of the anchor.
+                    var oldAnchor = m_MazeHolder.transform.parent;
+                    m_MazeHolder.transform.parent = anchor.transform;
+                    m_MazeHolder.transform.localPosition = Vector3.Scale(m_MazeHolder.transform.localPosition, new Vector3(1, 0, 1));
+                    if (oldAnchor != null)
+                        Destroy(oldAnchor);
                 }
-
-                // Compensate for the hitPose rotation facing away from the raycast (i.e.
-                // camera).
-                //andyObject.transform.Rotate(0, k_ModelRotation, 0, Space.Self);
-
-                // Create an anchor to allow ARCore to track the hitpoint as understanding of
-                // the physical world evolves.
-                var anchor = hit.Trackable.CreateAnchor(hit.Pose);
-
-                // Make Andy model a child of the anchor.
-                MazeHolder.transform.parent = anchor.transform;
-                MazeHolder.transform.localPosition = Vector3.Scale(MazeHolder.transform.localPosition, new Vector3(1, 0, 1));
             }
         }
     }

@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87302b18-2048-4859-8b07-2d272bdd9a9c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/uwb/xr/djiBridge/DJIfrontEnd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/uwb/xr/djiBridge/DJIfrontEnd.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/attachToPlane.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/attachToPlane.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Library/ScriptAssemblies/Assembly-CSharp.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../Library/ScriptAssemblies/Assembly-CSharp.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Library/ScriptAssemblies/Assembly-CSharp.dll.mdb" beforeDir="false" afterPath="$PROJECT_DIR$/../Library/ScriptAssemblies/Assembly-CSharp.dll.mdb" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -84,8 +87,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/djiBridge/DJIfrontEnd.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-233">
-              <caret line="241" column="30" selection-start-line="241" selection-start-column="30" selection-end-line="241" selection-end-column="30" />
+            <state relative-caret-position="-216">
+              <caret line="278" column="18" lean-forward="true" selection-start-line="278" selection-start-column="18" selection-end-line="278" selection-end-column="18" />
               <folding>
                 <element signature="e#30551#30552#0" expanded="true" />
                 <element signature="e#30577#30578#0" expanded="true" />
@@ -534,8 +537,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/djiBridge/DJIfrontEnd.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-233">
-          <caret line="241" column="30" selection-start-line="241" selection-start-column="30" selection-end-line="241" selection-end-column="30" />
+        <state relative-caret-position="-216">
+          <caret line="278" column="18" lean-forward="true" selection-start-line="278" selection-start-column="18" selection-end-line="278" selection-end-column="18" />
           <folding>
             <element signature="e#30551#30552#0" expanded="true" />
             <element signature="e#30577#30578#0" expanded="true" />
