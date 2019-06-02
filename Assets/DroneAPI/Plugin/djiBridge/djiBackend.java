@@ -22,11 +22,13 @@ import android.os.ResultReceiver;
 import android.util.Log;
 
 import com.unity3d.player.UnityPlayer;
+import com.uwb.xr.droneGame.UnityDroneActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
+import java.util.function.Consumer;
 
 import dji.sdk.base.BaseComponent;
 import dji.sdk.base.BaseProduct;
@@ -78,6 +80,12 @@ public class djiBackend {
     // After YUV data has been converted to a jpeg image, its data is stored here, and is accessible
     // via getFrameData();
     private byte[] jdata;
+
+    private Consumer<String> onReady;
+
+    public void setOnReadyCallback(Consumer<String> callback) {
+        onReady = callback;
+    }
 
     /**
      * Sets this class' local instance of the application context. The context is shared between
@@ -394,7 +402,7 @@ public class djiBackend {
             // unityplayer object know a new frame is available, and let the pipeline know that
             // another frame can now be pushed through
             jdata = baos.toByteArray();
-            UnityPlayer.UnitySendMessage(DRONE_OBJ,"set_frame_ready","true");
+            onReady.accept(UnityDroneActivity.FRAME_READY); // call onReady in frontend
             ready = true;
 
             return jdata;

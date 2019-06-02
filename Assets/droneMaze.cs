@@ -121,8 +121,6 @@ public class droneMaze : MonoBehaviour
         webTex = new WebCamTexture(500, 500, 5);
         webTex.Stop(); // just to be safe
         drone_camera_flag = true;
-        controller.EnableVideo();
-        enableVirtualSticks();
     }
 
     void setStartPos()

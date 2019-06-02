@@ -17,6 +17,13 @@ public class DebugDroneLocation : MonoBehaviour
         bridge = DroneBridge.GetReference();
         drone = FindObjectOfType<DroneView>();
     }
+    
+    private void Reset()
+    {
+        text = GetComponent<Text>();
+        text.text = "Phone: " + " / GPS=" + "\n" +
+                    "Drone: " + " / GPS=";
+    }
 
     // Update is called once per frame
     void Update()

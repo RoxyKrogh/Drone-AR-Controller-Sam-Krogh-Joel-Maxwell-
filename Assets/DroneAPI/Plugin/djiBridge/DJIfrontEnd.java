@@ -393,6 +393,7 @@ public class DJIfrontEnd extends UnityDroneActivity {
     public void setupDroneConnection() {
         if (djiBack == null) {
             djiBack = new djiBackend();
+            djiBack.setOnReadyCallback(this::setReady);
             djiBack.setContext(getApplication());
             djiBack.setUnityObject(mUnityPlayer);
             djiBack.onCreate();
@@ -697,6 +698,7 @@ public class DJIfrontEnd extends UnityDroneActivity {
         @Override
         public void run() {
             if (flightController != null) {
+                Log.v(TAG,"sending flightController update");
                 flightController.sendVirtualStickFlightControlData(
                         new FlightControlData(mPitch, mRoll, mYaw, mThrottle), new CommonCallbacks.CompletionCallback(){
 
@@ -709,6 +711,8 @@ public class DJIfrontEnd extends UnityDroneActivity {
                                 }
                             }
                         });
+            } else {
+                Log.v(TAG,"null flight controller in SendVirtualStickDataTask");
             }
         }
     }
@@ -719,7 +723,7 @@ public class DJIfrontEnd extends UnityDroneActivity {
     // Should be called after drone has taken off.
     // setting parameter: true to enable control, false to disable control.
     //-------------------------------------
-    public void setVirtualControlActive(boolean setting){
+    public void setVirtualControlActive(boolean setting) {
         if(setting){
             flightController.setVirtualStickModeEnabled(true, genericCallback("Virtual Sticks Enabled", true));
             flightController.setVirtualStickAdvancedModeEnabled(true);
@@ -728,6 +732,7 @@ public class DJIfrontEnd extends UnityDroneActivity {
             flightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
             flightController.setRollPitchControlMode(RollPitchControlMode.VELOCITY);
             flightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
+            showToast("Starting...");
             startSendingControl();
         }else{
             showToast("Stopping...");

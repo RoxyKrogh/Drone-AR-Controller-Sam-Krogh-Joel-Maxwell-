@@ -123,8 +123,9 @@ public class DroneBridge : MonoBehaviour
 
     private void OnEnable()
     {
+        CallVoidDroneFunc("registerUnityBridge", gameObject.name); // tell Java which Unity object to send function calls to
+        EnableVideo();
         VirtualControlEnabled = controlEnabled;
-        CallVoidDroneFunc("registerUnityBridge", gameObject.name);
     }
 
     // C# TO JAVA:
