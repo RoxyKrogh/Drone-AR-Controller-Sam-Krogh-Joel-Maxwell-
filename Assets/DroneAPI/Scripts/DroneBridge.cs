@@ -116,6 +116,9 @@ public class DroneBridge : MonoBehaviour
     {
         videoFeedOut = new Texture2D(960, 720);
         droneView = FindObjectOfType<DroneView>();
+        RefreshConnectionStatus();
+        RefreshFlightControllerStatus();
+        StartLocationService();
     }
 
     private void Update()

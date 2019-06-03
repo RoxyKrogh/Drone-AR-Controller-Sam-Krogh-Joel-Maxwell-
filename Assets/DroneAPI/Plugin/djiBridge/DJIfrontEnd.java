@@ -495,6 +495,9 @@ public class DJIfrontEnd extends UnityDroneActivity {
     public void startLocationService(){
         if(null == locationManager) {
             locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        } else {
+            showToast("Location service already started");
+            return;
         }
         if(null == listener) {
             listener = new LocationListener() {
