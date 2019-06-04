@@ -15,7 +15,7 @@ public static class LinkNativeView
             AutomationUtility.Symlink("EmbeddedView/mainTemplate.gradle", "Assets/Plugins/Android/mainTemplate.gradle");
             AutomationUtility.Symlink("EmbeddedView/gradle.properties", "Assets/Plugins/Android/gradle.properties");
             AutomationUtility.Symlink("EmbeddedView/src/main/AndroidManifest.xml", "Assets/Plugins/Android/AndroidManifest.xml");
-            AutomationUtility.Symlink("EmbeddedView/src/main/java/com/uwb/xr", "Assets/DroneAPI/Plugin/");
+            AutomationUtility.Symlink("EmbeddedView/src/main/java/com/uwb/xr", "Assets/DroneAPI/Plugin/", true);
         }
     }
 }

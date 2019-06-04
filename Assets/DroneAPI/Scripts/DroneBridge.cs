@@ -116,8 +116,6 @@ public class DroneBridge : MonoBehaviour
     {
         videoFeedOut = new Texture2D(960, 720);
         droneView = FindObjectOfType<DroneView>();
-        RefreshConnectionStatus();
-        RefreshFlightControllerStatus();
         StartLocationService();
     }
 
@@ -143,6 +141,9 @@ public class DroneBridge : MonoBehaviour
             droneAtt = new DroneVector(CallDroneFunc<double[]>("getDroneAttitude"));
             droneAttReady = false;
         }
+
+        RefreshConnectionStatus();
+        RefreshFlightControllerStatus();
     }
 
     private void OnEnable()

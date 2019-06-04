@@ -24,19 +24,22 @@ public static class AutomationUtility
 
     public static void Symlink(string link, string target, bool isDirectory = false)
     {
-        link = LocalPath(link);
-        target = LocalPath(target);
+        link = "\"" + Path.GetFullPath(link) + "\"";
+        target = "\"" + Path.GetFullPath(target) + "\"";
+
         string args = IsWindows ? ConcatArgs(link,target) : ConcatArgs(target,link); // parameter order reverse for cmd vs bash
+
         if (IsWindows && isDirectory)
             args = "/D " + args;
         args = (IsWindows ? "mklink " : "ln -s ") + args;
+
         ExecuteShell(args);
     }
 
 
     public static string ExecuteShell(string commands, string workingDirectory = null)
     {
-        return ExecuteCommand(IsWindows ? "cmd" : "bash", (IsWindows ? "/c /min " : "-c ") + commands, workingDirectory, true);
+        return ExecuteCommand(IsWindows ? "cmd" : "bash", (IsWindows ? "/c " : "-c ") + commands, workingDirectory, true);
     }
 
     public static string ExecuteCommand(string command, string arguments = null, string workingDirectory = null, bool useShell = false)

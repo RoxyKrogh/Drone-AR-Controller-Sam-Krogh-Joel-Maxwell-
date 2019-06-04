@@ -198,6 +198,8 @@ public class DJIfrontEnd extends UnityDroneActivity {
             }
         }
 
+        Log.d(TAG, "Refreshing Flight Controller Status");
+
         if (flightController != null) {
 
             FlightControllerState st = flightController.getState();
