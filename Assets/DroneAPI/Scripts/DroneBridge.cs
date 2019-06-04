@@ -11,10 +11,12 @@ public class DroneBridge : MonoBehaviour
     //private float maxYaw, maxThrottle, maxPitch, maxRoll;
     private static bool controlEnabled = false;
 
-    private bool frameReady, phoneLocReady, droneLocReady, droneAttReady;
+    private bool frameReady, phoneLocReady, phoneHeadReady, droneLocReady, droneAttReady;
+    private float phoneHead;
     private DroneVector phoneLoc, droneLoc, droneAtt;
     private Texture2D videoFeedOut;
     private DroneView droneView;
+    private Matrix4x4 alignToNorth = Matrix4x4.identity;
 
     [SerializeField]
     private Camera phoneView; // object that is tracked to the phone's location
@@ -33,7 +35,8 @@ public class DroneBridge : MonoBehaviour
         private double[] xyz;
         public double Latitude { get { return xyz[0]; } set { xyz[0] = value; } }
         public double Longitude { get { return xyz[1]; } set { xyz[1] = value; } }
-        public double Altitude { get { return xyz[2]; } set { xyz[2] = value; } }
+        public double Altitude { get { return xyz[2]; } set { xyz[2] = value; } } // phone has bearing instead of altitude
+        public double Bearing { get { return xyz[2]; } set { xyz[2] = value; } } // phone has bearing instead of altitude
 
         public double Pitch { get { return xyz[0]; } set { xyz[0] = value; } }
         public double Roll { get { return xyz[1]; } set { xyz[1] = value; } }
@@ -60,7 +63,7 @@ public class DroneBridge : MonoBehaviour
             float lat = (float)Latitude * latScale;
             float longi = (float)Longitude * longiScale;
             float alti = (float)Altitude;
-            return new Vector3(lat,alti,longi);
+            return new Vector3(lat,alti,-longi);
         }
 
         public Quaternion ToRotation()
@@ -116,9 +119,6 @@ public class DroneBridge : MonoBehaviour
     {
         videoFeedOut = new Texture2D(960, 720);
         droneView = FindObjectOfType<DroneView>();
-        RefreshConnectionStatus();
-        RefreshFlightControllerStatus();
-        StartLocationService();
     }
 
     private void Update()
@@ -143,6 +143,30 @@ public class DroneBridge : MonoBehaviour
             droneAtt = new DroneVector(CallDroneFunc<double[]>("getDroneAttitude"));
             droneAttReady = false;
         }
+        if (phoneHeadReady)
+        {
+            phoneHead = CallDroneFunc<float>("getPhoneHeading");
+            phoneHeadReady = false;
+        }
+        RefreshConnectionStatus();
+        RefreshFlightControllerStatus();
+    }
+
+    public Vector3 MakeRelativeToNorth(Vector3 vector)
+    {
+        return alignToNorth.MultiplyVector(vector);
+    }
+
+    public void CalibrateWorldNorth(Transform world)
+    {
+        Vector3 pfwd = Vector3.ProjectOnPlane(PhoneView.forward, Vector3.up).normalized;
+        float pvbear = Mathf.Rad2Deg * Mathf.Atan2(pfwd.z, pfwd.x); // world space (in-game) phone object bearing
+        double pbear =  - PhoneHeading; // real-world (sensor) phone bearing (direction / 0deg = north)
+        Vector3 wfwd = world.forward; // world forward vector
+        float wbear = Mathf.Rad2Deg * Mathf.Atan2(wfwd.z, wfwd.x); // world transform bearing
+        float relbear = pvbear - (float)pbear - wbear;
+        alignToNorth = Matrix4x4.Rotate(Quaternion.AngleAxis(relbear, Vector3.up));
+        ShowToast("Adjusting north by " + relbear + " deg");
     }
 
     private void OnEnable()
@@ -150,6 +174,7 @@ public class DroneBridge : MonoBehaviour
         CallVoidDroneFunc("registerUnityBridge", gameObject.name); // tell Java which Unity object to send function calls to
         EnableVideo();
         VirtualControlEnabled = controlEnabled;
+        StartLocationService();
     }
 
     // C# TO JAVA:
@@ -241,6 +266,11 @@ public class DroneBridge : MonoBehaviour
         {
             return (phoneLoc ?? new DroneVector(0, 0, 0)); // use 0 location if not receiving location from java
         }
+    }
+
+    public float PhoneHeading
+    {
+        get { return phoneHead; }
     }
 
     public Transform PhoneView
@@ -449,6 +479,9 @@ public class DroneBridge : MonoBehaviour
                 case "DRONE_ATT":
                     // drone attitude ready
                     droneAttReady = true;
+                    break;
+                case "PHONE_HEAD":
+                    phoneHeadReady = true;
                     break;
             }
         }

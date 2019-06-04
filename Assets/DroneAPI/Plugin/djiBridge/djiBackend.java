@@ -180,7 +180,7 @@ public class djiBackend {
                 // processing
                 ready = false; // Should likely be replaced with a separate variable lock
 
-                Log.d(TAG, "onYuvDataReceived: DATA SIZE: "+ dataSize + " Width: "+width+ " Height " + height);
+                //Log.d(TAG, "onYuvDataReceived: DATA SIZE: "+ dataSize + " Width: "+width+ " Height " + height);
 
                 // Our array to hold the buffered YUV data
                 byte[] dat;
@@ -383,12 +383,12 @@ public class djiBackend {
                 bytes[y.length + (i * 2) + 1] = nu[i];
             }
 
-            Log.d(TAG, "onYuvDataReceived: BYTE GET");
+            //Log.d(TAG, "onYuvDataReceived: BYTE GET");
             //----------
 
             // Once we have our converted data, we need to convert it to an image
             YuvImage yuvimage = new YuvImage(bytes, ImageFormat.NV21, width, height, null);
-            Log.d(TAG, "onYuvDataReceived: YUVIMAGE created");
+            //Log.d(TAG, "onYuvDataReceived: YUVIMAGE created");
 
             // We'll use this to store the result of our jpeg conversion
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -396,7 +396,7 @@ public class djiBackend {
             // Then, we can convert that image into a jpeg, storing the resulting byte array in our
             // baos
             yuvimage.compressToJpeg(new Rect(0, 0, width, height), 80, baos);
-            Log.d(TAG, "onYuvDataReceived: compress");
+            //Log.d(TAG, "onYuvDataReceived: compress");
 
             // Finally, we store our byte array in our synchronized jdata object, let our
             // unityplayer object know a new frame is available, and let the pipeline know that

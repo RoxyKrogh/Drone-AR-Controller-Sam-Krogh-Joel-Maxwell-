@@ -17,7 +17,8 @@ public abstract class UnityDroneActivity extends UnityPlayerActivity implements 
     public static final String FRAME_READY = "VIDEO",
                                 PHONE_LOC_READY = "PHONE_LOC",
                                 DRONE_LOC_READY = "DRONE_LOC",
-                                DRONE_ATT_READY = "DRONE_ATT";
+                                DRONE_ATT_READY = "DRONE_ATT",
+                                PHONE_HEAD_READY = "PHONE_HEAD";
 
     private static final String TAG = UnityDroneActivity.class.getName();
 

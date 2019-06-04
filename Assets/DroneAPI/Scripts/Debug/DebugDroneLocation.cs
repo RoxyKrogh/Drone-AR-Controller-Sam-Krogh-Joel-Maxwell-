@@ -22,7 +22,8 @@ public class DebugDroneLocation : MonoBehaviour
     {
         text = GetComponent<Text>();
         text.text = "Phone: " + " / GPS=" + "\n" +
-                    "Drone: " + " / GPS=";
+                    "Drone: " + " / GPS=" + "\n" +
+                    "Phone Heading: ";
     }
 
     // Update is called once per frame
@@ -33,6 +34,8 @@ public class DebugDroneLocation : MonoBehaviour
         var pGps = bridge.PhoneLocation; // gps location (latitude, longitude, altitude)
         var dGps = bridge.DroneLocation; // gps location (latitude, longitude, altitude)
         text.text = "Phone: " + p + " / GPS=" + pGps + "\n" +
+                    "Heading: " + bridge.PhoneHeading + "\n" +
                     "Drone: " + d + " / GPS=" + dGps;
+        Debug.Log("Phone Heading: " + bridge.PhoneHeading);
     }
 }

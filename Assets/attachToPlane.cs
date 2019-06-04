@@ -104,6 +104,7 @@ public class attachToPlane : MonoBehaviour {
                     var oldAnchor = m_MazeHolder.transform.parent;
                     m_MazeHolder.transform.parent = anchor.transform;
                     m_MazeHolder.transform.localPosition = Vector3.Scale(m_MazeHolder.transform.localPosition, new Vector3(1, 0, 1));
+                    FindObjectOfType<DroneBridge>().CalibrateWorldNorth(m_MazeHolder);
                     if (oldAnchor != null)
                         Destroy(oldAnchor);
                 }

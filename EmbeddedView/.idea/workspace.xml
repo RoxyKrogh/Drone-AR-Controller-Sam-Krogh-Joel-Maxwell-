@@ -5,11 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87302b18-2048-4859-8b07-2d272bdd9a9c" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../Assets/DroneAPI/Scripts/DroneBridge.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/DroneAPI/Scripts/DroneBridge.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/DroneAPI/Scripts/DroneView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/DroneAPI/Scripts/DroneView.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/attachToPlane.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/attachToPlane.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/uwb/xr" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/uwb/xr" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Library/EditorUserBuildSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/../Library/EditorUserBuildSettings.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Library/ScriptAssemblies/Assembly-CSharp.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../Library/ScriptAssemblies/Assembly-CSharp.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Library/ScriptAssemblies/Assembly-CSharp.dll.mdb" beforeDir="false" afterPath="$PROJECT_DIR$/../Library/ScriptAssemblies/Assembly-CSharp.dll.mdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Library/expandedItems" beforeDir="false" afterPath="$PROJECT_DIR$/../Library/expandedItems" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -34,17 +38,66 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../Assets/DroneAPI/Plugin/djiBridge/DJIfrontEnd.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="9962">
+            <state relative-caret-position="10013">
               <caret line="675" column="5" selection-start-line="675" selection-start-column="5" selection-end-line="675" selection-end-column="5" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mainTemplate.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-646">
+            <state relative-caret-position="323">
               <caret line="19" column="9" selection-start-line="19" selection-start-column="9" selection-end-line="19" selection-end-column="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/droneGame/UnityDroneActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="187">
+              <caret line="20" column="63" selection-start-line="20" selection-start-column="63" selection-end-line="20" selection-end-column="63" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/djiBridge/DJIfrontEnd.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="277">
+              <caret line="562" column="66" lean-forward="true" selection-start-line="562" selection-start-column="66" selection-end-line="562" selection-end-column="66" />
+              <folding>
+                <element signature="e#22345#22346#0" expanded="true" />
+                <element signature="e#32901#32902#0" expanded="true" />
+                <element signature="e#32927#32928#0" expanded="true" />
+                <element signature="e#33258#33259#0" expanded="true" />
+                <element signature="e#33285#33286#0" expanded="true" />
+                <element signature="e#33628#33629#0" expanded="true" />
+                <element signature="e#33656#33657#0" expanded="true" />
+                <element signature="e#33993#33994#0" expanded="true" />
+                <element signature="e#34024#34025#0" expanded="true" />
+                <element signature="e#39923#39924#0" expanded="true" />
+                <element signature="e#39967#39968#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/djiBridge/djiBackend.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="175">
+              <caret line="182" column="18" selection-start-line="182" selection-start-column="18" selection-end-line="182" selection-end-column="18" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/droneGame/UnityDroneInterface.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="323">
+              <caret line="19" column="28" selection-start-line="19" selection-start-column="28" selection-end-line="19" selection-end-column="28" />
             </state>
           </provider>
         </entry>
@@ -72,17 +125,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>mready</find>
-      <find>FLAG_CONNECTION_CHANGE</find>
-      <find>setUnityObject</find>
-      <find>mProduct</find>
-      <find>setContext</find>
-      <find>getApplicationContext</find>
-      <find>@Override</find>
-      <find>onter</find>
-      <find>onterminate</find>
-      <find>SavePhotoTask</find>
-      <find>phoneloca</find>
       <find>followme</find>
       <find>phonelo</find>
       <find>movingObje</find>
@@ -102,6 +144,17 @@
       <find>refreshFlightControllerStatus()</find>
       <find>refreshFlightControllerStatus</find>
       <find>startLocation</find>
+      <find>sensor</find>
+      <find>getPhoneLo</find>
+      <find>phoneHe</find>
+      <find>getPhoneH</find>
+      <find>phoneHea</find>
+      <find>gimbal</find>
+      <find>flight control</find>
+      <find>virtual</find>
+      <find>bak</find>
+      <find>yuv</find>
+      <find>Log.</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -115,10 +168,10 @@
         <option value="$PROJECT_DIR$/mainTemplate.gradle" />
         <option value="$PROJECT_DIR$/../Assets/DroneAPI/Plugin/djiBridge/DJIfrontEnd.java" />
         <option value="$PROJECT_DIR$/../Assets/DroneAPI/Plugin/djiBridge/djiBackend.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/uwb/xr/droneGame/UnityDroneInterface.java" />
         <option value="$PROJECT_DIR$/gradle.properties" />
-        <option value="$PROJECT_DIR$/src/main/java/com/uwb/xr/djiBridge/djiBackend.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/uwb/xr/droneGame/UnityDroneInterface.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/uwb/xr/droneGame/UnityDroneActivity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/uwb/xr/djiBridge/djiBackend.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/uwb/xr/djiBridge/DJIfrontEnd.java" />
       </list>
     </option>
@@ -137,10 +190,47 @@
     <panes>
       <pane id="ProjectPane" />
       <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="AndroidView">
         <subPane>
           <expand>
+            <path>
+              <item name="EmbeddedView" type="1abcf292:AndroidViewProjectNode" />
+              <item name="EmbeddedView" type="feadf853:AndroidModuleNode" />
+            </path>
+            <path>
+              <item name="EmbeddedView" type="1abcf292:AndroidViewProjectNode" />
+              <item name="EmbeddedView" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+            </path>
+            <path>
+              <item name="EmbeddedView" type="1abcf292:AndroidViewProjectNode" />
+              <item name="EmbeddedView" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="com" type="cbb59c9e:AndroidPsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="EmbeddedView" type="1abcf292:AndroidViewProjectNode" />
+              <item name="EmbeddedView" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="com" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="xr" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="EmbeddedView" type="1abcf292:AndroidViewProjectNode" />
+              <item name="EmbeddedView" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="com" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="xr" type="462c0819:PsiDirectoryNode" />
+              <item name="djiBridge" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="EmbeddedView" type="1abcf292:AndroidViewProjectNode" />
+              <item name="EmbeddedView" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="com" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="xr" type="462c0819:PsiDirectoryNode" />
+              <item name="droneGame" type="462c0819:PsiDirectoryNode" />
+            </path>
             <path>
               <item name="EmbeddedView" type="1abcf292:AndroidViewProjectNode" />
               <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
@@ -149,6 +239,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -309,11 +400,11 @@
       <window_info id="Resources Explorer" order="7" />
       <window_info id="Capture Tool" order="8" />
       <window_info anchor="bottom" id="Version Control" order="0" weight="0.3286119" />
-      <window_info anchor="bottom" id="Logcat" order="1" weight="0.32777777" />
+      <window_info active="true" anchor="bottom" id="Logcat" order="1" visible="true" weight="0.32777777" />
       <window_info anchor="bottom" id="TODO" order="2" weight="0.3286119" />
       <window_info anchor="bottom" id="Terminal" order="3" weight="0.3286119" />
       <window_info anchor="bottom" id="Event Log" order="4" side_tool="true" />
-      <window_info anchor="bottom" id="Build" order="5" visible="true" weight="0.033333335" />
+      <window_info anchor="bottom" id="Build" order="5" weight="0.033333335" />
       <window_info anchor="bottom" id="Android Profiler" order="6" show_stripe_button="false" />
       <window_info anchor="bottom" id="Run" order="7" />
       <window_info anchor="bottom" id="Debug" order="8" />
@@ -363,31 +454,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../Assets/DroneAPI/Plugin/djiBridge/DJIfrontEnd.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9962">
-          <caret line="675" column="5" selection-start-line="675" selection-start-column="5" selection-end-line="675" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/droneGame/UnityDroneInterface.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="18" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/droneGame/UnityPlayerActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1462">
           <caret line="96" column="40" selection-start-line="96" selection-start-column="40" selection-end-line="96" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/droneGame/UnityDroneActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="629">
-          <caret line="48" column="16" selection-start-line="48" selection-start-column="16" selection-end-line="48" selection-end-column="16" />
         </state>
       </provider>
     </entry>
@@ -398,10 +468,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/djiBridge/djiBackend.java">
+    <entry file="file://$PROJECT_DIR$/../Assets/DroneAPI/Plugin/djiBridge/DJIfrontEnd.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3740">
-          <caret line="260" column="25" selection-start-line="260" selection-start-column="25" selection-end-line="260" selection-end-column="25" />
+        <state relative-caret-position="10013">
+          <caret line="675" column="5" selection-start-line="675" selection-start-column="5" selection-end-line="675" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mainTemplate.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="19" column="9" selection-start-line="19" selection-start-column="9" selection-end-line="19" selection-end-column="9" />
         </state>
       </provider>
     </entry>
@@ -420,17 +497,44 @@
       </provider>
       <provider editor-type-id="android-manifest" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/djiBridge/DJIfrontEnd.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/droneGame/UnityDroneInterface.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="94">
-          <caret line="224" column="30" selection-start-line="224" selection-start-column="30" selection-end-line="224" selection-end-column="30" />
+        <state relative-caret-position="323">
+          <caret line="19" column="28" selection-start-line="19" selection-start-column="28" selection-end-line="19" selection-end-column="28" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mainTemplate.gradle">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/droneGame/UnityDroneActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-646">
-          <caret line="19" column="9" selection-start-line="19" selection-start-column="9" selection-end-line="19" selection-end-column="9" />
+        <state relative-caret-position="187">
+          <caret line="20" column="63" selection-start-line="20" selection-start-column="63" selection-end-line="20" selection-end-column="63" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/djiBridge/djiBackend.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="182" column="18" selection-start-line="182" selection-start-column="18" selection-end-line="182" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/uwb/xr/djiBridge/DJIfrontEnd.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="277">
+          <caret line="562" column="66" lean-forward="true" selection-start-line="562" selection-start-column="66" selection-end-line="562" selection-end-column="66" />
+          <folding>
+            <element signature="e#22345#22346#0" expanded="true" />
+            <element signature="e#32901#32902#0" expanded="true" />
+            <element signature="e#32927#32928#0" expanded="true" />
+            <element signature="e#33258#33259#0" expanded="true" />
+            <element signature="e#33285#33286#0" expanded="true" />
+            <element signature="e#33628#33629#0" expanded="true" />
+            <element signature="e#33656#33657#0" expanded="true" />
+            <element signature="e#33993#33994#0" expanded="true" />
+            <element signature="e#34024#34025#0" expanded="true" />
+            <element signature="e#39923#39924#0" expanded="true" />
+            <element signature="e#39967#39968#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

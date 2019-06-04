@@ -19,6 +19,9 @@ public class DroneView : MonoBehaviour
     void Update()
     {
         Vector3 relloc = (bridge.DroneLocation - bridge.PhoneLocation).Coordinate2Meters(); // relative location of drone to phone
+        relloc.y = 0;
+        relloc = bridge.MakeRelativeToNorth(relloc); // allign latitude/logitude
+        relloc.y = (float)bridge.DroneLocation.Altitude * 2; // hover 10 units above the player
         transform.localPosition = PhonePosition + relloc; // position relative to phone object in local space
         transform.localRotation = bridge.DroneAttitude.ToRotation();
     }

@@ -17,6 +17,7 @@ public interface UnityDroneInterface {
     boolean getIsFlying();
     boolean getMotorsOn();
     double[] getPhoneLocation();
+    float getPhoneHeading();
     String getProductText();
     String getState();
     byte[] getVideoFrame();

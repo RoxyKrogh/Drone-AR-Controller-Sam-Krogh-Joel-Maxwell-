@@ -8,6 +8,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -113,6 +117,7 @@ public class DJIfrontEnd extends UnityDroneActivity {
     private Observable<Long> timer = Observable.timer(100, TimeUnit.MILLISECONDS).observeOn(Schedulers.computation()).repeat();
     private LocationManager locationManager;
     private LocationListener listener;
+    private SensorManager sensorManager;
 
     //-------------------------------------
     // Connection State Data
@@ -133,6 +138,8 @@ public class DJIfrontEnd extends UnityDroneActivity {
     private double[] droneAttitude;
     private GPSSignalLevel GPSlevel;
     private int satelliteCount;
+    private float phoneHeading;
+
     // ------------------------------------
 
     protected BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -189,14 +196,6 @@ public class DJIfrontEnd extends UnityDroneActivity {
     @Override
     public void refreshFlightControllerStatus() {
         state = "";
-        if(null == flightController){
-            try {
-                initFlightController();
-            } catch (Exception e) {
-                Log.d(TAG, "failed to init flight controller");
-                state = "failed to init flight controller";
-            }
-        }
 
         if (flightController != null) {
 
@@ -315,7 +314,6 @@ public class DJIfrontEnd extends UnityDroneActivity {
             return new double[] {0,0,0};
         }
     }
-
 
 
     //----------------------------------------------------------------------------------------------
@@ -493,41 +491,85 @@ public class DJIfrontEnd extends UnityDroneActivity {
     //-------------------------------------
     @Override
     public void startLocationService(){
-        if(null == locationManager) {
-            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        } else {
-            showToast("Location service already started");
-            return;
+        showToast("Starting location service");
+        INITIALIZE_LOCATION:
+        {
+            if (null == locationManager) {
+                locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+            } else {
+                showToast("Location service already started");
+                break INITIALIZE_LOCATION;
+            }
+            if (null == listener) {
+                listener = new LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
+                        movingObjectLocation = new LocationCoordinate2D(location.getLatitude(), location.getLongitude());
+                        movingObjectBearing = location.getBearing();
+                        setReady(PHONE_LOC_READY);
+                    }
+
+                    @Override
+                    public void onStatusChanged(String s, int i, Bundle bundle) {
+                    }
+
+                    @Override
+                    public void onProviderEnabled(String s) {
+                    }
+
+                    @Override
+                    public void onProviderDisabled(String s) {
+                        Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(i);
+                    }
+                };
+
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    showToast("Location Permission missing");
+                    return;
+                }
+                locationManager.requestLocationUpdates("gps", 1000, 0, listener);
+            }
         }
-        if(null == listener) {
-            listener = new LocationListener() {
+        // track phone heading
+        if (sensorManager == null) {
+            showToast("Starting sensor listener");
+            sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
+            SensorEventListener mySensorEventListener = new SensorEventListener() {
+                float[] mGravity;
+                float[] mGeomagnetic;
                 @Override
-                public void onLocationChanged(Location location) {
-                    movingObjectLocation = new LocationCoordinate2D(location.getLatitude(), location.getLongitude());
-                    movingObjectBearing = location.getBearing();
-                    setReady(PHONE_LOC_READY);
+                public void onAccuracyChanged(Sensor sensor, int accuracy) {
                 }
 
                 @Override
-                public void onStatusChanged(String s, int i, Bundle bundle) {
-                }
+                public void onSensorChanged(SensorEvent event) {
 
-                @Override
-                public void onProviderEnabled(String s) {
-                }
+                    if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+                        mGravity = event.values;
 
-                @Override
-                public void onProviderDisabled(String s) {
-                    Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    startActivity(i);
+                    if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
+                        mGeomagnetic = event.values;
+
+                    if (mGravity != null && mGeomagnetic != null) {
+                        float R[] = new float[9];
+                        float I[] = new float[9];
+
+                        if (SensorManager.getRotationMatrix(R, I, mGravity, mGeomagnetic)) {
+
+                            // orientation contains azimut, pitch and roll
+                            float orientation[] = new float[3];
+                            SensorManager.getOrientation(R, orientation);
+
+                            phoneHeading = (float)Math.toDegrees(-orientation[0]); // heading in degrees
+                            setReady(UnityDroneActivity.PHONE_HEAD_READY);
+                        }
+                    }
                 }
             };
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                showToast("Location Permission missing");
-                return;
-            }
-            locationManager.requestLocationUpdates("gps", 1000, 0, listener);
+            sensorManager.registerListener(mySensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+            sensorManager.registerListener(mySensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_NORMAL);
         }
     }
 
@@ -544,6 +586,11 @@ public class DJIfrontEnd extends UnityDroneActivity {
         }else{
             return new double[] {0,0,0};
         }
+    }
+
+    @Override
+    public float getPhoneHeading() {
+        return phoneHeading;
     }
 
     //-------------------------------------
@@ -666,11 +713,10 @@ public class DJIfrontEnd extends UnityDroneActivity {
         if(null == mProductGimbal){
             initGimbal();
         }
-        mProductGimbal.rotate(new Rotation.Builder().pitch(pitchValue)
+        mProductGimbal.rotate(new Rotation.Builder()
+                .pitch(pitchValue)
                 .mode(RotationMode.ABSOLUTE_ANGLE)
-                .yaw(Rotation.NO_ROTATION)
-                .roll(rollValue)
-                .time(0)
+                .time(0.1)
                 .build(), genericCallback("Rotation", false));
 
     }
@@ -728,6 +774,14 @@ public class DJIfrontEnd extends UnityDroneActivity {
     //-------------------------------------
     public void setVirtualControlActive(boolean setting) {
         if(setting){
+            if(null == flightController){
+                try {
+                    initFlightController();
+                } catch (Exception e) {
+                    Log.d(TAG, "failed to init flight controller");
+                    state = "failed to init flight controller";
+                }
+            }
             flightController.setVirtualStickModeEnabled(true, genericCallback("Virtual Sticks Enabled", true));
             flightController.setVirtualStickAdvancedModeEnabled(true);
             flightController.setVerticalControlMode(VerticalControlMode.VELOCITY); //genericCallback("Position", true));
