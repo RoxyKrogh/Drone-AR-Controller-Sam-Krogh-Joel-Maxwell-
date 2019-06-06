@@ -12,6 +12,8 @@ public interface UnityDroneInterface {
     String getConnectionStatus();
     double[] getDroneAttitude();
     double[] getDroneLocation();
+    boolean isDroneConnected();
+    int getDroneGpsLevel();
     String getFlightMode();
     String getIMUstate();
     boolean getIsFlying();
@@ -23,7 +25,7 @@ public interface UnityDroneInterface {
     byte[] getVideoFrame();
     void land();
     void refreshFlightControllerStatus();
-    void setGimbalRotation(float pitchValue, float rollValue);
+    void setGimbalRotation(float pitchValue, float yawValue);
     void setYaw(float val);
     void setPitch(float val);
     void setRoll(float val);

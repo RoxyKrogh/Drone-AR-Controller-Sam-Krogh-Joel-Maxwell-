@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -21,6 +22,7 @@ public class DroneBridge : MonoBehaviour
     [SerializeField]
     private Camera phoneView; // object that is tracked to the phone's location
     public Material videoFeedDisplay;
+    public int minimumGpsLevel = 4; // while DroneGpsLevel is below this, GPS sensor will be ignored
 
     /// <summary>
     /// A vector of doubles returned by some Drone api properties. 
@@ -135,7 +137,12 @@ public class DroneBridge : MonoBehaviour
         }
         if (droneLocReady)
         {
-            droneLoc = new DroneVector(CallDroneFunc<double[]>("getDroneLocation"));
+            if (DroneGpsLevel < minimumGpsLevel)
+                droneLoc = null;
+            else
+                droneLoc = new DroneVector(CallDroneFunc<double[]>("getDroneLocation"));
+            if (droneView != null && !droneView.IsCalibrated)
+                droneView.CalibrateGPSCenter();
             droneLocReady = false;
         }
         if (droneAttReady)
@@ -172,12 +179,15 @@ public class DroneBridge : MonoBehaviour
     private void OnEnable()
     {
         CallVoidDroneFunc("registerUnityBridge", gameObject.name); // tell Java which Unity object to send function calls to
+        StartLocationService(); // start phone gps and orientation sensor listener
         EnableVideo();
         VirtualControlEnabled = controlEnabled;
-        StartLocationService();
+        DroneCameraPitch = 90f;
     }
 
     // C# TO JAVA:
+
+    public int DroneGpsLevel { get { return CallDroneFunc<int>("getDroneGpsLevel"); } }
 
     public bool IsConnected
     {
@@ -236,7 +246,7 @@ public class DroneBridge : MonoBehaviour
     {
         get
         {
-            return droneLoc ?? (PhoneLocation + new DroneVector(0, 0, 10));
+            return (droneLoc ?? (PhoneLocation + new DroneVector(0, 0, 10)));
         }
     }
 
@@ -313,10 +323,29 @@ public class DroneBridge : MonoBehaviour
         CallVoidDroneFunc("refreshFlightControllerStatus");
     }
 
-    public void SetGimbalRotation(float pitchValue, float rollValue)
+    public void SetDroneCameraGimbal(float pitchValue, float yawValue)
     {
-        CallVoidDroneFunc("setGimbalRotation", pitchValue, rollValue);
+        CallVoidDroneFunc("setGimbalRotation", pitchValue, yawValue);
         droneView.CameraPitch = pitchValue;
+        droneView.CameraYaw = yawValue;
+    }
+
+    public float DroneCameraPitch
+    {
+        get { return droneView != null ? droneView.CameraPitch : float.NaN; }
+        set
+        {
+            SetDroneCameraGimbal(value, droneView.CameraYaw);
+        }
+    }
+
+    public float DroneCameraYaw
+    {
+        get { return droneView != null ? droneView.CameraYaw : float.NaN; }
+        set
+        {
+            SetDroneCameraGimbal(droneView.CameraPitch, value);
+        }
     }
 
     /// <summary>
@@ -384,34 +413,55 @@ public class DroneBridge : MonoBehaviour
     }
 
     // helper function to reduce code length
-    public void CallVoidDroneFunc(string funcName)
+    public bool CallVoidDroneFunc(string funcName)
     {
         using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
         {
             using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
             {
+                try
+                {
 #if UNITY_EDITOR
-                Debug.Log("Calling drone function: " + funcName + "()");
+                    Debug.Log("Calling drone function: " + funcName + "()");
+                    return false;
 #else
-                obj_Activity.Call(funcName);
+                    obj_Activity.Call(funcName);
+                    return true;
 #endif
+
+                }
+                catch (Exception partyPooper) // catch exception from Java
+                {
+                    Debug.LogException(partyPooper);
+                    return false;
+                }
             }
         }
     }
 
     // helper function to reduce code length
-    public void CallVoidDroneFunc(string funcName, params object[] args)
+    public bool CallVoidDroneFunc(string funcName, params object[] args)
     {
         using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
         {
             using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
             {
+                try
+                {
 #if UNITY_EDITOR
-                string argsStr = string.Join(", ", args.Select(a => a.ToString() ?? "null").ToArray());
-                Debug.Log("Calling drone function: " + funcName + "(" + argsStr + ")");
+                    string argsStr = string.Join(", ", args.Select(a => a.ToString() ?? "null").ToArray());
+                    Debug.Log("Calling drone function: " + funcName + "(" + argsStr + ")");
+                    return false;
 #else
-                obj_Activity.Call(funcName, args);
+                    obj_Activity.Call(funcName, args);
+                    return true;
 #endif
+                }
+                catch (Exception partyPooper) // catch exception from Java
+                {
+                    Debug.LogException(partyPooper);
+                    return false;
+                }
             }
         }
     }
@@ -422,12 +472,20 @@ public class DroneBridge : MonoBehaviour
         {
             using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
             {
+                try
+                {
 #if UNITY_EDITOR
-                Debug.Log("Calling drone function: " + funcName + "()");
-                return default(T);
+                    Debug.Log("Calling drone function: " + funcName + "()");
+                    return default(T);
 #else
-                return obj_Activity.Call<T>(funcName);
+                    return obj_Activity.Call<T>(funcName);
 #endif
+                }
+                catch (Exception partyPooper) // catch exception from Java
+                {
+                    Debug.LogException(partyPooper);
+                    return default(T);
+                }
             }
         }
     }
@@ -438,6 +496,8 @@ public class DroneBridge : MonoBehaviour
         {
             using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
             {
+                try
+                {
 #if UNITY_EDITOR
                 string argsStr = string.Join(", ", args.Select(a => a.ToString() ?? "null").ToArray());
                 Debug.Log("Calling drone function: " + funcName + "(" + argsStr + ")");
@@ -445,15 +505,14 @@ public class DroneBridge : MonoBehaviour
 #else
                 return obj_Activity.Call<T>(funcName, args);
 #endif
+                }
+                catch (Exception partyPooper) // catch exception from Java
+                {
+                    Debug.LogException(partyPooper);
+                    return default(T);
+                }
             }
         }
-    }
-
-    AndroidJavaObject getAppContext()
-    {
-        AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-        AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-        return obj_Activity;
     }
 
     // FROM JAVA TO C#:
