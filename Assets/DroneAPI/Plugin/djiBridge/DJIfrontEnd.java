@@ -54,6 +54,7 @@ import dji.common.flightcontroller.FlightControllerState;
 import dji.common.flightcontroller.GPSSignalLevel;
 import dji.common.flightcontroller.LocationCoordinate3D;
 import dji.common.flightcontroller.virtualstick.FlightControlData;
+import dji.common.gimbal.CapabilityKey;
 import dji.common.gimbal.Rotation;
 import dji.common.gimbal.RotationMode;
 import dji.common.handheldcontroller.ControllerMode;
@@ -213,7 +214,7 @@ public class DJIfrontEnd extends UnityDroneActivity {
             state += "|  Flight Mode: " + flightMode;
 
             GPSlevel = st.getGPSSignalLevel();
-            state += "\nGPS Signal Level: " + st.getGPSSignalLevel();
+            state += "\nGPS Signal Level: " + GPSlevel.toString();
 
             state += "| GPS Satelite count:" + st.getSatelliteCount();
 
@@ -235,10 +236,15 @@ public class DJIfrontEnd extends UnityDroneActivity {
         }
     }
 
+    // Drone GPS signal strength
+    @Override
+    public int getDroneGpsLevel() { return GPSlevel.value(); };
+
     //-------------------------------------
     // getIMUstate
     // returns ready when the IMU is preheated and flight is now possible.
     //-------------------------------------
+    @Override
     public String getIMUstate(){
         return imuState;
     }
@@ -248,6 +254,7 @@ public class DJIfrontEnd extends UnityDroneActivity {
     // returns a large string containing the flight controller sate information.
     // An easy way to display all state information in Unity
     //-------------------------------------
+    @Override
     public String getState() {
         return state;
     }
@@ -256,6 +263,7 @@ public class DJIfrontEnd extends UnityDroneActivity {
     // getIsFlying
     // return true if the drone is flying.
     //-------------------------------------
+    @Override
     public boolean getIsFlying(){
         return isFlying;
     }
@@ -264,12 +272,14 @@ public class DJIfrontEnd extends UnityDroneActivity {
     // getMotorsOn
     // return true if the drone's motors are on.
     //-------------------------------------
+    @Override
     public boolean getMotorsOn(){ return motorsOn;}
 
     //-------------------------------------
     // getVideoFrame
     // returns a byte arra of RGB formatted image data ready for display in Unity as a Texture2D
     //-------------------------------------
+    @Override
     public byte[] getVideoFrame() {
         try {
             return djiBack.getJdata();
@@ -283,6 +293,7 @@ public class DJIfrontEnd extends UnityDroneActivity {
     // getDroneAttitude
     // returns the current pitch roll and yaw of the drone.
     //-------------------------------------
+    @Override
     public double[] getDroneAttitude(){
         return droneAttitude;
     }
@@ -294,6 +305,7 @@ public class DJIfrontEnd extends UnityDroneActivity {
     // P-GPS -- gps singal is storng enough for GPS stabilization. Aircraft will automatically try
     // and maintain current position but will still wander a small amount.
     //-------------------------------------
+    @Override
     public String getFlightMode(){
         return flightMode;
     }
@@ -313,6 +325,12 @@ public class DJIfrontEnd extends UnityDroneActivity {
         }else{
             return new double[] {0,0,0};
         }
+    }
+
+    @Override
+    public boolean isDroneConnected() {
+        final BaseProduct mProduct = getProduct();
+        return mProduct != null && mProduct.isConnected();
     }
 
 
@@ -363,6 +381,7 @@ public class DJIfrontEnd extends UnityDroneActivity {
     // Returns a string descriptor of the connected product.
     // If no product is connected it will return a default "unknown" string.
     //-------------------------------------
+    @Override
     public String getProductText() {
         return productText;
     }
@@ -371,6 +390,7 @@ public class DJIfrontEnd extends UnityDroneActivity {
     // getConnectionStatus
     // returns the connection status of the drone
     //-------------------------------------
+    @Override
     public String getConnectionStatus() {
         return connectionStatus;
     }
@@ -463,6 +483,7 @@ public class DJIfrontEnd extends UnityDroneActivity {
     // enables the video processing pipeline
     // may affect system load when enabled.
     //-------------------------------------
+    @Override
     public void enableVideo(){
         if(null != djiBack){
             djiBack.enableVideo();
@@ -476,6 +497,7 @@ public class DJIfrontEnd extends UnityDroneActivity {
     // diables the video processing pipeline.
     // can be utilized to reduce system load when not streaming video from the drone
     //-------------------------------------
+    @Override
     public void disableVideo(){
         if(djiBack != null){
             djiBack.disableVideo();
@@ -708,16 +730,19 @@ public class DJIfrontEnd extends UnityDroneActivity {
     // unintuitive as the apparent forward direction does not match the visual forward direction.
     //-------------------------------------
     @Override
-    public void setGimbalRotation(float pitchValue, float rollValue){
-        Log.d(TAG, "GIMBAL ROTATION: " + pitchValue + " " + rollValue);
+    public void setGimbalRotation(float pitchValue, float yawValue){
+        Log.d(TAG, "GIMBAL ROTATION: " + pitchValue + " " + yawValue);
         if(null == mProductGimbal){
             initGimbal();
         }
-        mProductGimbal.rotate(new Rotation.Builder()
-                .pitch(pitchValue)
+        Rotation.Builder rb = new Rotation.Builder()
                 .mode(RotationMode.ABSOLUTE_ANGLE)
-                .time(0.1)
-                .build(), genericCallback("Rotation", false));
+                .time(0.1);
+        if (mProductGimbal.getCapabilities().get(CapabilityKey.ADJUST_PITCH).isSupported()) // can we pitch?
+            rb = rb.pitch(pitchValue); // yes!
+        if (mProductGimbal.getCapabilities().get(CapabilityKey.ADJUST_YAW).isSupported()) // can we yaw?
+            rb = rb.yaw(yawValue); // yaw!
+        mProductGimbal.rotate(rb.build(), genericCallback("Rotation", false));
 
     }
 
@@ -829,6 +854,7 @@ public class DJIfrontEnd extends UnityDroneActivity {
     // Max value +/-90
     // for slower rotation use a maximum of +/-45
     //-------------------------------------
+    @Override
     public void setYaw(float val){
         mYaw = val;
     }
@@ -839,6 +865,7 @@ public class DJIfrontEnd extends UnityDroneActivity {
     // max value +/-4.  Recommended max value +/-2
     // values from 2 to 4 are extremely fast and will deplete the battery very rapidly.
     //-------------------------------------
+    @Override
     public void setRoll(float val){
         mRoll = val;
     }
@@ -849,6 +876,7 @@ public class DJIfrontEnd extends UnityDroneActivity {
     // max value +/-4.  Recommended max value +/-2
     // values from 2 to 4 are extremely fast and will deplete the battery very rapidly.
     //-------------------------------------
+    @Override
     public void setPitch(float val){
         mPitch = val;
     }
@@ -859,6 +887,7 @@ public class DJIfrontEnd extends UnityDroneActivity {
     // max value +/-4.  Recommended max value +/-2
     // values from 2 to 4 are extremely fast and will deplete the battery very rapidly.
     //-------------------------------------
+    @Override
     public void setThrottle(float val){
         mThrottle = val;
     }

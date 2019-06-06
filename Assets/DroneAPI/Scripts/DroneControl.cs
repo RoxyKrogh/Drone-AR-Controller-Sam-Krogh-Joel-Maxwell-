@@ -115,13 +115,13 @@ public class DroneControl : MonoBehaviour
             if (!Input.GetButton("L1") && Input.GetButton("R1"))
             {
                 Debug.Log("Gimbal down");
-                bridge.SetGimbalRotation(-90f, 0f);
+                bridge.DroneCameraPitch = -90f;
             }
 
             if (Input.GetButton("L1") && !Input.GetButton("R1"))
             {
                 Debug.Log("Gimbal up");
-                bridge.SetGimbalRotation(0f, 0f);
+                bridge.DroneCameraPitch = 0f;
             }
 
         }
