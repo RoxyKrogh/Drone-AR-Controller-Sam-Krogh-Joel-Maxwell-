@@ -187,53 +187,88 @@ public class DroneBridge : MonoBehaviour
 
     // C# TO JAVA:
 
+    /// <summary>
+    /// Drone GPS signal strength (level 0-5)
+    /// </summary>
     public int DroneGpsLevel { get { return CallDroneFunc<int>("getDroneGpsLevel"); } }
 
+    /// <summary>
+    /// Is the a drone connected?
+    /// </summary>
     public bool IsConnected
     {
-        get { return droneLoc != null; } // TODO: replace with actual connection status query
+        get { return CallDroneFunc<bool>("isDroneConnected"); } // TODO: replace with actual connection status query
     }
-    
+
+    /// <summary>
+    /// Updates the connection status of the Drone.
+    // Should be regularly polled during the setup portion of the application to ensure connection
+    // to the drone is active.
+    /// </summary>
     public void RefreshConnectionStatus()
     {
         CallVoidDroneFunc("refreshConnectionStatus");
-    }
-
-    public void FollowMeStart()
-    {
-        CallVoidDroneFunc("followMeStart");
-    }
-
-    public void FollowMeStop()
-    {
-        CallVoidDroneFunc("followMeStop");
-    }
-
-    public void ShowToast(string message )
-    {
-        CallVoidDroneFunc("showToast", message);
-    }
-
-    public float Throttle
-    {
-        set { CallVoidDroneFunc("setThrottle", value); }
-    }
-
-    public void DisableVideo()
-    {
-        CallVoidDroneFunc("disableVideo");
-    }
-
-    public void EnableVideo()
-    {
-        CallVoidDroneFunc("enableVideo");
     }
 
     public string ConnectionStatus
     {
         get { return CallDroneFunc<string>("getConnectionStatus"); }
     }
+    
+    /// <summary>
+    /// Not implemented
+    /// </summary>
+    public void FollowMeStart()
+    {
+        CallVoidDroneFunc("followMeStart");
+    }
 
+    /// <summary>
+    /// Not implemented
+    /// </summary>
+    public void FollowMeStop()
+    {
+        CallVoidDroneFunc("followMeStop");
+    }
+
+    /// <summary>
+    /// Show a toast message on the phone (native Android).
+    /// </summary>
+    /// <param name="message">The message text to display.</param>
+    public void ShowToast(string message )
+    {
+        CallVoidDroneFunc("showToast", message);
+    }
+
+    /// <summary>
+    /// controls the vertical motion of the drone.
+    //  max value +/-4.  Recommended max value +/-2
+    //  values from 2 to 4 are extremely fast and will deplete the battery very rapidly.
+    /// </summary>
+    public float Throttle
+    {
+        set { CallVoidDroneFunc("setThrottle", value); }
+    }
+
+    /// <summary>
+    /// Disable drone video feed
+    /// </summary>
+    public void DisableVideo()
+    {
+        CallVoidDroneFunc("disableVideo");
+    }
+
+    /// <summary>
+    /// Enable drone video feed
+    /// </summary>
+    public void EnableVideo()
+    {
+        CallVoidDroneFunc("enableVideo");
+    }
+
+    /// <summary>
+    /// returns the current pitch roll and yaw of the drone.
+    /// </summary>
     public DroneVector DroneAttitude
     {
         get
@@ -242,6 +277,10 @@ public class DroneBridge : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// GPS coordinates and altitude of the drone.
+    /// Altitude is reset when the drone lands, and changes as the drone flys up/down.
+    /// </summary>
     public DroneVector DroneLocation
     {
         get
@@ -250,26 +289,44 @@ public class DroneBridge : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// returns the current drone flight mode.
+    /// ATTI -- is Attitude mode. No GPS stabilization is available and aircraft will wander severely
+    /// P-GPS -- gps singal is storng enough for GPS stabilization. Aircraft will automatically try
+    /// and maintain current position but will still wander a small amount.
+    /// </summary>
     public string FlightMode
     {
         get { return CallDroneFunc<string>("getFlightMode"); }
     }
 
+    /// <summary>
+    /// returns ready when the IMU is preheated and flight is now possible.
+    /// </summary>
     public string IMUState
     {
         get { return CallDroneFunc<string>("getIMUstate"); }
     }
 
+    /// <summary>
+    /// return true if the drone is flying.
+    /// </summary>
     public bool IsFlying
     {
         get { return CallDroneFunc<bool>("getIsFlying"); }
     }
 
+    /// <summary>
+    /// return true if the drone's motors are on.
+    /// </summary>
     public bool IsMotorOn
     {
         get { return CallDroneFunc<bool>("getMotorsOn"); }
     }
 
+    /// <summary>
+    /// Return a DroneVector with the phone's GPS coordinates and bearing.
+    /// </summary>
     public DroneVector PhoneLocation
     {
         get
@@ -278,11 +335,17 @@ public class DroneBridge : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// The direction the phone is pointing, relative to North (real-world orientation)
+    /// </summary>
     public float PhoneHeading
     {
         get { return phoneHead; }
     }
 
+    /// <summary>
+    /// The Unity object that is tracked to the phone's viewing position (by an AR library, such as AR Core).
+    /// </summary>
     public Transform PhoneView
     {
         get { return phoneView.transform; }
@@ -292,12 +355,20 @@ public class DroneBridge : MonoBehaviour
     {
         get { return CallDroneFunc<string>("getProductText"); }
     }
-
+    
+    /// <summary>
+    /// A string representing various statistics about the drone/connection.
+    /// </summary>
     public string State
     {
         get { return CallDroneFunc<string>("getState"); }
     }
 
+    /// <summary>
+    /// Get a new video frame from the drone's camera and apply it to a material's main texture.
+    /// </summary>
+    /// <param name="surface">The material to apply the vido frame texture to</param>
+    /// <returns>true if a new video frame was available/applied to the material.</returns>
     public bool GetVideoFrame(Material surface)
     {
         byte[] frame = CallDroneFunc<byte[]>("getVideoFrame");
@@ -313,16 +384,20 @@ public class DroneBridge : MonoBehaviour
         return frame != null;
     }
 
-    public void Land()
-    {
-        CallVoidDroneFunc("land");
-    }
 
+    /// <summary>
+    /// Update input from all drone sensors (gps, orientation, state, etc.)
+    /// </summary>
     public void RefreshFlightControllerStatus()
     {
         CallVoidDroneFunc("refreshFlightControllerStatus");
     }
 
+    /// <summary>
+    /// Set the yaw and pitch of the drone's camera gimbal
+    /// </summary>
+    /// <param name="pitchValue">pitch, in degrees (-90 to 90)</param>
+    /// <param name="yawValue">yaw, in degrees</param>
     public void SetDroneCameraGimbal(float pitchValue, float yawValue)
     {
         CallVoidDroneFunc("setGimbalRotation", pitchValue, yawValue);
@@ -330,6 +405,9 @@ public class DroneBridge : MonoBehaviour
         droneView.CameraYaw = yawValue;
     }
 
+    /// <summary>
+    /// Adjust the pitch of the drone's camera gimbal (-90 to 90 degrees)
+    /// </summary>
     public float DroneCameraPitch
     {
         get { return droneView != null ? droneView.CameraPitch : float.NaN; }
@@ -339,6 +417,9 @@ public class DroneBridge : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Adjust the yaw of the drone's camera gimbal (not supported by all drone models)
+    /// </summary>
     public float DroneCameraYaw
     {
         get { return droneView != null ? droneView.CameraYaw : float.NaN; }
@@ -382,22 +463,41 @@ public class DroneBridge : MonoBehaviour
         set { CallVoidDroneFunc("setRoll", value); }
         get { return (float)DroneAttitude.Roll; }
     }
-
+    
     public void SetupDroneConnection()
     {
         CallVoidDroneFunc("setupDroneConnection");
     }
 
+    /// <summary>
+    /// Begin Android device location updates
+    /// </summary>
     public void StartLocationService()
     {
         CallVoidDroneFunc("startLocationService");
     }
 
+    /// <summary>
+    /// Command the drone to take off from the ground, upwards.
+    /// VirtualControlEnabled must be true.
+    /// </summary>
     public void TakeOff()
     {
         CallVoidDroneFunc("takeOff");
     }
 
+    /// <summary>
+    /// Command the drone to descend and land on the ground.
+    /// VirtualControlEnabled must be true.
+    /// </summary>
+    public void Land()
+    {
+        CallVoidDroneFunc("land");
+    }
+
+    /// <summary>
+    /// Enable/disable drone gps location updates and flight control from Unity
+    /// </summary>
     public bool VirtualControlEnabled
     {
         get
