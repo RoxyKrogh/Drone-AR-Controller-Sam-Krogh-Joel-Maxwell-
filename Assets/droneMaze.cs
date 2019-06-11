@@ -5,9 +5,10 @@ using UnityEngine;
 using UnityEngine.UI;
 //using UnityStandardAssets.CrossPlatformInput;
 
-
 public class droneMaze : MonoBehaviour
 {
+    public DroneBridge controller;
+
     public Button startBtn;
     public Button Drone_video_btn;
     public Button Phone_video_btn;
@@ -23,16 +24,12 @@ public class droneMaze : MonoBehaviour
 
     // flight controll values
     public Text yawValue;
-    public float yaw;
 
     public Text rollValue;
-    public float roll;
 
     public Text pitchValue;
-    public float pitch;
 
     public Text throttleValue;
-    public float throttle;
 
     public Text locationText;
     public Text distanceText;
@@ -58,9 +55,9 @@ public class droneMaze : MonoBehaviour
     private bool phone_camera_flag;
     private bool calc_distance_flag;
     private bool droneRender;
-    private Double[] baseLoc;
-    private Double[] phoneLoc;
-    private Double[] droneLoc;
+    private DroneBridge.DroneVector baseLoc;
+    private DroneBridge.DroneVector phoneLoc;
+    private DroneBridge.DroneVector droneLoc;
 
     // Drone Camera
     private Texture2D tex2d;
@@ -71,7 +68,6 @@ public class droneMaze : MonoBehaviour
 
     // Joystick Buttons
     private string[] buttons = new string[] { "A", "B", "X", "Y", "R1", "R2", "L1", "L2", "L3", "R3", "START", "BACK" };
-    private float maxYaw, maxThrottle, maxPitch, maxRoll;
     private bool controlEnabled;
 
     // Display positions
@@ -90,8 +86,6 @@ public class droneMaze : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
-
         testButton.onClick.AddListener(setStartPos);
         update_display_flag = true;
         update_status_flag = false;
@@ -115,15 +109,6 @@ public class droneMaze : MonoBehaviour
         stopControl.onClick.AddListener(disableVirtualSticks);
         swapDisplays.onClick.AddListener(swap);
         droneRender = false;
-        // flight controll values
-        maxYaw = 90f;
-        maxThrottle = 2;
-        maxPitch = 2;
-        maxRoll = 2;
-        yaw = 0;
-        pitch = 0;
-        roll = 0;
-        throttle = 0;
 
         //#######################
         lastFrame = Time.time;
@@ -136,8 +121,6 @@ public class droneMaze : MonoBehaviour
         webTex = new WebCamTexture(500, 500, 5);
         webTex.Stop(); // just to be safe
         drone_camera_flag = true;
-        getAppContext().Call("enableVideo");
-        enableVirtualSticks();
     }
 
     void setStartPos()
@@ -166,13 +149,13 @@ public class droneMaze : MonoBehaviour
         if (drone_camera_flag)
         {
             drone_camera_flag = false;
-            getAppContext().Call("disableVideo");
+            controller.DisableVideo();
             Drone_video_btn.colors = on;
         }
         else
         {
             drone_camera_flag = true;
-            getAppContext().Call("enableVideo");
+            controller.EnableVideo();
             Drone_video_btn.colors = off;
         }
     }
@@ -200,7 +183,7 @@ public class droneMaze : MonoBehaviour
         }
     }
 
-    void swap()
+    public void swap()
     {
         droneRender = !droneRender;
 
@@ -222,43 +205,32 @@ public class droneMaze : MonoBehaviour
 
     void toast()
     {
-        callVoidDroneFunc("showToast", new object[] { "Button Clicked in Unity" }); 
+        controller.ShowToast("Button Clicked in Unity"); 
     }
 
     void updateText()
     {
-        using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-        {
-            using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
-            {
-                obj_Activity.Call("refreshConnectionStatus");
-                obj_Activity.Call("refreshFlightControllerStatus");
-                connection_status.text = obj_Activity.Call<string>("getConnectionStatus");
-                connected_hardware.text = obj_Activity.Call<string>("getProductText");
-                flight_controller_status.text = obj_Activity.Call<string>("getState");
-            }
-        }
+        controller.RefreshConnectionStatus();
+        controller.RefreshFlightControllerStatus();
+        connection_status.text = controller.ConnectionStatus;
+        connected_hardware.text = controller.ProductText;
+        flight_controller_status.text = controller.State;
     }
 
     void startDroneFunc()
     {
-         callVoidDroneFunc("setupDroneConnection");
+        controller.SetupDroneConnection();
     }
 
     void updateDisplay()
     {
-        if (drone_camera_flag )
+        /*if (drone_camera_flag )
         {
-            Debug.Log("Drone Camera");
             if (frame_ready_flag)
             {
-                Debug.Log("Frame Ready");
                 frame_ready_flag = false;
-                byte[] t = getAppContext().Call<byte[]>("getVideoFrame");
-                if (null != t)
+                if (controller.GetVideoFrame(tex2d)) // get video frame and apply to tex2d
                 {
-                    tex2d.LoadImage(t);
-                    tex2d.Apply();
                     droneDisplay.GetComponent<Renderer>().material.mainTexture = tex2d;
                     fps_display.text = "" + Math.Round(1 / (Time.time - lastFrame), 2) + "fps";
                     lastFrame = Time.time;
@@ -268,7 +240,7 @@ public class droneMaze : MonoBehaviour
         else
         {
             droneDisplay.GetComponent<Renderer>().material.mainTexture = noVideo;
-        }
+        }*/
         if ( phone_camera_flag )
         {
             //if (webTex.isPlaying == false) { webTex.Play(); }
@@ -289,237 +261,39 @@ public class droneMaze : MonoBehaviour
 
     void takeOff()
     {
-         callVoidDroneFunc("takeOff");
+        controller.TakeOff();
     }
 
     void land()
     {
-        callVoidDroneFunc("land");
+        controller.Land();
     }
 
     void startFollowMe()
     {
-        callVoidDroneFunc("followMeStart");
+        controller.FollowMeStart();
     }
 
     void stopFollowMe()
     {
-        callVoidDroneFunc("followMeStop");
+        controller.FollowMeStop();
     }
 
     void startLocation()
     {
-        callVoidDroneFunc("startLocationService");
+        controller.StartLocationService();
     }
 
     void enableVirtualSticks()
     {
         controlEnabled = true;
-        callVoidDroneFunc("setVirtualControlActive", new object[] { true });
+        controller.VirtualControlEnabled = true;
     }
 
     void disableVirtualSticks()
     {
         controlEnabled = false;
-        callVoidDroneFunc("setVirtualControlActive", new object[] { false });
-    }
-
-    // helper function to reduce code length
-    void callVoidDroneFunc(String funcName)
-    {
-        using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-        {
-            using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
-            {
-                obj_Activity.Call(funcName);
-            }
-        }
-    }
-
-    // helper function to reduce code length
-    void callVoidDroneFunc(String funcName, object[] args)
-    {
-        using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-        {
-            using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
-            {
-                obj_Activity.Call(funcName, args);
-            }
-        }
-    }
-
-    AndroidJavaObject getAppContext()
-    {
-        AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-        AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-        return obj_Activity;
-    }
-
-    void yawUp()
-    {
-        yaw += 10;
-        yawValue.text = yaw.ToString();
-        callVoidDroneFunc("setYaw", new object[] { yaw });
-    }
-    void yawDown()
-    {
-        yaw -= 10;
-        yawValue.text = yaw.ToString();
-        callVoidDroneFunc("setYaw", new object[] { yaw });
-    }
-
-
-    void rollUp()
-    {
-        roll += 1;
-        rollValue.text = roll.ToString();
-        callVoidDroneFunc("setRoll", new object[] { roll });
-    }
-    void rollDown()
-    {
-        roll -= 1;
-        rollValue.text = roll.ToString();
-        callVoidDroneFunc("setRoll", new object[] { roll });
-    }
-
-    void pitchUp()
-    {
-        pitch += 1;
-        pitchValue.text = pitch.ToString();
-        callVoidDroneFunc("setPitch", new object[] { pitch });
-    }
-    void pitchDown()
-    {
-        pitch -= 1;
-        pitchValue.text = pitch.ToString();
-        callVoidDroneFunc("setPitch", new object[] { pitch });
-    }
-
-    void throttleUp()
-    {
-        throttle += 1;
-        throttleValue.text = throttle.ToString();
-        callVoidDroneFunc("setThrottle", new object[] { throttle });
-    }
-    void throttleDown()
-    {
-        throttle -= 1;
-        throttleValue.text = throttle.ToString();
-        callVoidDroneFunc("setThrottle", new object[] { throttle });
-    }
-
-
-    void controllerInput()
-    {
-        buttonText.text = "";
-        foreach (string key in buttons)
-        {
-            if (Input.GetButton(key))
-            {
-                buttonText.text += key + " ";
-            }
-
-        }
-        float LJV = Input.GetAxis("LJV");
-        float LJH = Input.GetAxis("LJH");
-        float RJV = Input.GetAxis("RJV");
-        float RJH = Input.GetAxis("RJH");
-        float DPV = Input.GetAxis("DPV");
-        float DPH = Input.GetAxis("DPH");
-        buttonText.text += Mathf.Abs(LJV) >= 0.1f ? "LJV: "+LJV.ToString() : "";
-        buttonText.text += Mathf.Abs(LJH) >= 0.1f ? "LJH: " + LJH.ToString() : "";
-        buttonText.text += Mathf.Abs(RJV) >= 0.1f ? "RJV: " + RJV.ToString() : "";
-        buttonText.text += Mathf.Abs(RJH) >= 0.1f ? "RJH: " + RJH.ToString() : "";
-        buttonText.text += Mathf.Abs(DPH) >= 0.1f ? "DPH: " + DPH.ToString() : "";
-        buttonText.text += Mathf.Abs(DPV) >= 0.1f ? "DPV: " + DPV.ToString() : "";
-
-        if( controlEnabled)
-        {
-            if (Mathf.Abs(RJV) >= 0.1f)
-            {
-                throttle = maxThrottle * -RJV;
-                throttleValue.text = throttle.ToString();
-                callVoidDroneFunc("setThrottle", new object[] { throttle });
-            }
-            else
-            {
-                throttle = 0;
-                throttleValue.text = throttle.ToString();
-                callVoidDroneFunc("setThrottle", new object[] { throttle });
-            }
-            if (Mathf.Abs(RJH) >= 0.1f)
-            {
-                yaw = maxYaw * RJH;
-                yawValue.text = yaw.ToString();
-                callVoidDroneFunc("setYaw", new object[] { yaw });
-                droneCamera.transform.Rotate(0, 0, Time.deltaTime * yaw);
-                droneCamera.transform.Rotate(0, 0, Time.deltaTime * yaw);
-            }
-            else
-            {
-                yaw = 0;
-                yawValue.text = yaw.ToString();
-                callVoidDroneFunc("setYaw", new object[] { yaw });
-                
-            }
-            if (Mathf.Abs(LJH) >= 0.1f)
-            {
-                pitch = LJH * maxPitch;
-                pitchValue.text = pitch.ToString(); 
-                callVoidDroneFunc("setPitch", new object[] { pitch });
-                droneHolder.transform.Translate(Time.deltaTime * pitch, 0, 0);
-                
-            }
-            else
-            {
-                pitch = 0;
-                pitchValue.text = pitch.ToString();
-                callVoidDroneFunc("setPitch", new object[] { pitch });
-            }
-            if (Mathf.Abs(LJV) >= 0.1f)
-            {
-                roll = maxRoll * -LJV;
-                rollValue.text = roll.ToString();
-                callVoidDroneFunc("setRoll", new object[] { roll });
-                droneHolder.transform.Translate(0, 0, Time.deltaTime * roll);
-            }
-            else
-            {
-                roll = 0;
-                rollValue.text = roll.ToString();
-                callVoidDroneFunc("setRoll", new object[] { roll });
-            }
-            if (Input.GetButtonDown("B"))
-            {
-                swap();
-            }
-            if(Input.GetButton("L2") && Input.GetButton("R2")){
-                if (Input.GetButtonDown("Y"))
-                {
-                    Debug.Log("take off buttons!");
-                    callVoidDroneFunc("takeOff");
-                }
-                if (Input.GetButtonDown("A"))
-                {
-                    Debug.Log("Landing buttons!");
-                    callVoidDroneFunc("land");
-                }
-            }
-
-            if (!Input.GetButton("L1") && Input.GetButton("R1"))
-            {
-                Debug.Log("Gimbal down");
-                callVoidDroneFunc("adjustGimbalRotation", new object[] {-90f, 0f});
-            }
-
-            if (Input.GetButton("L1") && !Input.GetButton("R1"))
-            {
-                Debug.Log("Gimbal up");
-                callVoidDroneFunc("adjustGimbalRotation", new object[] {0f, 0f});
-            }
-
-        }
-        
+        controller.VirtualControlEnabled = false;
     }
 
     // Haversine formula
@@ -571,17 +345,8 @@ public class droneMaze : MonoBehaviour
     void locationUpdate(String data)
     {
         Debug.Log("LOCATION");
-        Double[] loc;
-        Double[] dLoc;
-        using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-        {
-            using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
-            {
-                loc = obj_Activity.Call<Double[]>("getPhoneLocation");
-                dLoc = obj_Activity.Call<Double[]>("getDroneLocation");
-                
-            }
-        }
+        var loc = controller.PhoneLocation;
+        var dLoc = controller.DroneLocation;
         if(null == baseLoc)
         {
             baseLoc = loc;
@@ -607,6 +372,5 @@ public class droneMaze : MonoBehaviour
         {
             updateDisplay();
         }
-        controllerInput();
     }
 }
