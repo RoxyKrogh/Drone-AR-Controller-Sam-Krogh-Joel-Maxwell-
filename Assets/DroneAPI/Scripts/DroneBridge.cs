@@ -509,6 +509,7 @@ public class DroneBridge : MonoBehaviour
         {
             CallVoidDroneFunc("setVirtualControlActive", value);
             controlEnabled = value;
+            ShowToast("Set Virtual Control to " + value);
         }
     }
 

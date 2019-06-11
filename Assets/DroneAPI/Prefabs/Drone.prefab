@@ -199,6 +199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa7b4d8f3264801488d8e19aa08f6390, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  locationInterpolation: 0.5
 --- !u!1 &1813029341948242041
 GameObject:
   m_ObjectHideFlags: 0
@@ -298,7 +299,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 4294966751
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 8400000, guid: f76b746522cb2f746ba97887fca8bed1, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: a23d9e39727f0c744af76daa39b859d5, type: 2}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0

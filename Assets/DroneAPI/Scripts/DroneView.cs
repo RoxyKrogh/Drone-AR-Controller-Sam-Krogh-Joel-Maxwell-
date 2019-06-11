@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class DroneView : MonoBehaviour
 {
+    private const float COORDINATE_SCALE = 1.0f;
     private DroneBridge bridge;
     private Transform gimbal;
     private Vector3 targetPosition; // position to interpolate toward (localPosition)
@@ -12,6 +13,9 @@ public class DroneView : MonoBehaviour
     private Vector3 positionOrigin = Vector3.zero;
     private DroneBridge.DroneVector gpsOrigin = new DroneBridge.DroneVector(0,0,0);
     private bool isCalibrated = false;
+
+    public Transform debugTargetObj;
+    public Transform debugOriginObj;
 
     // Start is called before the first frame update
     void Start()
@@ -30,10 +34,14 @@ public class DroneView : MonoBehaviour
             relloc.y = 0;
             relloc = bridge.MakeRelativeToNorth(relloc); // allign latitude/logitude
             relloc.y = 0;
-            relloc.x *= -1;
-            relloc.z *= -1;
-            targetPosition = positionOrigin + relloc; // position relative to phone object in local space
-            targetPosition.y = (float)bridge.DroneLocation.Altitude * 2 + 0.5f; // hover 10 units above the player
+            relloc.x *= -COORDINATE_SCALE;
+            relloc.z *= -COORDINATE_SCALE;
+            var newTarget = positionOrigin + relloc; // position relative to phone object in local space
+            targetPosition = newTarget;
+            targetPosition.y = bridge.IsFlying ? (float)bridge.DroneLocation.Altitude : 0.1f; // hover 10 units above the player
+
+            if (debugTargetObj != null)
+                debugTargetObj.localPosition = Vector3.ProjectOnPlane(targetPosition,Vector3.up);
 
             Vector3 moveTo = Vector3.Lerp(transform.localPosition, targetPosition, locationInterpolation);
             transform.localPosition = moveTo;
@@ -114,8 +122,12 @@ public class DroneView : MonoBehaviour
         {
             positionOrigin = Position2LocalSpace(bridge.PhoneView.localPosition);
             gpsOrigin = bridge.DroneLocation;
+            //gpsOrigin.Latitude = System.Math.Round(gpsOrigin.Latitude, 9);
+            //gpsOrigin.Longitude = System.Math.Round(gpsOrigin.Longitude, 9);
             positionOrigin.y = 0f;
             isCalibrated = true;
+            if (debugOriginObj != null)
+                debugOriginObj.localPosition = Vector3.ProjectOnPlane(positionOrigin, Vector3.up);
         } catch(System.NullReferenceException ex)
         {
             Debug.Log("Failed to calibrate GPS (null reference).");

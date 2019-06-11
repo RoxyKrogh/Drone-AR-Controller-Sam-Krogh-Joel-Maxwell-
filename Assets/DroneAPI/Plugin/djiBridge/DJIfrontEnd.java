@@ -733,6 +733,8 @@ public class DJIfrontEnd extends UnityDroneActivity {
     public void setGimbalRotation(float pitchValue, float yawValue){
         Log.d(TAG, "GIMBAL ROTATION: " + pitchValue + " " + yawValue);
         if(null == mProductGimbal){
+            if (getProduct() == null)
+                Log.v(TAG,"No/null product connected when rotating camera gimbal");
             initGimbal();
         }
         Rotation.Builder rb = new Rotation.Builder()
@@ -802,6 +804,7 @@ public class DJIfrontEnd extends UnityDroneActivity {
             if(null == flightController){
                 try {
                     initFlightController();
+                    Log.d(TAG, "successfully initialized flight controller");
                 } catch (Exception e) {
                     Log.d(TAG, "failed to init flight controller");
                     state = "failed to init flight controller";
@@ -843,9 +846,11 @@ public class DJIfrontEnd extends UnityDroneActivity {
     // Any further changes to the roll, pitch, yaw or throttle will not change the drone's state.
     //-------------------------------------
     public void stopSendingControl(){
-        mSendVirtualStickDataTimer.cancel();
-        mSendVirtualStickDataTimer.purge();
-        mSendVirtualStickDataTimer = null;
+        if (mSendVirtualStickDataTimer != null) {
+            mSendVirtualStickDataTimer.cancel();
+            mSendVirtualStickDataTimer.purge();
+            mSendVirtualStickDataTimer = null;
+        }
     }
 
     //-------------------------------------
