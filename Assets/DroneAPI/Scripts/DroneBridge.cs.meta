@@ -3,7 +3,9 @@ guid: c35c281a700d68c4fb67792d495a4a97
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - phoneView: {instanceID: 0}
+  - videoFeedDisplay: {fileID: 2100000, guid: e89cc5e7fba8ab44783cd3cfc2379b8d, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

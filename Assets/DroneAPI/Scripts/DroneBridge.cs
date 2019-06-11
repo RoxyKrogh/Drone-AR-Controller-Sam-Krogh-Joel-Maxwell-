@@ -21,7 +21,6 @@ public class DroneBridge : MonoBehaviour
 
     [SerializeField]
     private Camera phoneView; // object that is tracked to the phone's location
-    public Material videoFeedDisplay;
     public int minimumGpsLevel = 4; // while DroneGpsLevel is below this, GPS sensor will be ignored
 
     /// <summary>
@@ -94,21 +93,6 @@ public class DroneBridge : MonoBehaviour
     }
 
     private static bool TooManyBridges { get { return FindObjectsOfType<DroneBridge>().Length > 1; } } // no more than 1 DroneBridge per scene
-    private static DroneBridge WorstBridge
-    {
-        get
-        {
-            DroneBridge[] bridges = FindObjectsOfType<DroneBridge>();
-            int ping = bridges.Length;
-            foreach (DroneBridge b in bridges)
-            {
-                if (b.videoFeedDisplay == null || b.phoneView == null || ping == 0) 
-                    return b; // return least defined DroneBridge, or last DroneBridge
-                ping--;
-            }
-            return null; // no bridges
-        }
-    }
 
     // UNITY FUNCTIONS:
     
@@ -127,7 +111,7 @@ public class DroneBridge : MonoBehaviour
     {
         if (frameReady && videoFeedOut != null)
         {
-            GetVideoFrame(videoFeedDisplay);
+            GetVideoFrame(null);
             frameReady = false;
         }
         if (phoneLocReady) // phone location ready
@@ -374,12 +358,13 @@ public class DroneBridge : MonoBehaviour
         byte[] frame = CallDroneFunc<byte[]>("getVideoFrame");
         if (frame != null)
         {
+            frameReady = false;
             videoFeedOut.LoadImage(frame);
             videoFeedOut.Apply();
-            if (surface != null)
-            {
-                surface.mainTexture = videoFeedOut;
-            }
+        }
+        if (surface != null)
+        {
+            surface.mainTexture = videoFeedOut;
         }
         return frame != null;
     }
@@ -401,8 +386,11 @@ public class DroneBridge : MonoBehaviour
     public void SetDroneCameraGimbal(float pitchValue, float yawValue)
     {
         CallVoidDroneFunc("setGimbalRotation", pitchValue, yawValue);
-        droneView.CameraPitch = pitchValue;
-        droneView.CameraYaw = yawValue;
+        if (droneView != null)
+        {
+            droneView.CameraPitch = pitchValue;
+            droneView.CameraYaw = yawValue;
+        }
     }
 
     /// <summary>
@@ -413,7 +401,7 @@ public class DroneBridge : MonoBehaviour
         get { return droneView != null ? droneView.CameraPitch : float.NaN; }
         set
         {
-            SetDroneCameraGimbal(value, droneView.CameraYaw);
+            SetDroneCameraGimbal(value, droneView == null ? 0 : droneView.CameraYaw);
         }
     }
 
@@ -425,7 +413,7 @@ public class DroneBridge : MonoBehaviour
         get { return droneView != null ? droneView.CameraYaw : float.NaN; }
         set
         {
-            SetDroneCameraGimbal(droneView.CameraPitch, value);
+            SetDroneCameraGimbal(droneView == null ? 0 : droneView.CameraPitch, value);
         }
     }
 

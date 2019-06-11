@@ -7,6 +7,7 @@ public class DroneView : MonoBehaviour
     private const float COORDINATE_SCALE = 1.0f;
     private DroneBridge bridge;
     private Transform gimbal;
+    private Transform viewPlane;
     private Vector3 targetPosition; // position to interpolate toward (localPosition)
     [Range(0.1f,1.0f)] public float locationInterpolation = 0.5f; // amount to interpolate
     
@@ -23,6 +24,9 @@ public class DroneView : MonoBehaviour
         bridge = DroneBridge.GetReference(); // get DroneBridge in the scene
         gimbal = GimbalChild; // get Camera gimbal in children
         Debug.Assert(bridge != null, "There must be a DroneBridge component in the scene.");
+
+        // fit video feed view plane to camera projection
+        viewPlane = transform.Find("DroneGimbal/DroneCamera/droneViewHolder/droneVideoFeed");
     }
 
     // Update is called once per frame
@@ -48,6 +52,14 @@ public class DroneView : MonoBehaviour
 
             transform.localRotation = Quaternion.AngleAxis(bridge.Yaw, Vector3.up);
         }
+        // match viewPlane to camera projection
+        var camera = gimbal.GetComponentInChildren<Camera>();
+        var height = 2.0f * Mathf.Tan(camera.fieldOfView * Mathf.Deg2Rad * 0.5f) * viewPlane.localPosition.z;
+        var width = camera.aspect * height;
+        var size = Mathf.Max(width, height) * camera.orthographicSize;
+        viewPlane.localScale = new Vector3(size, size, 1);
+        // update viewPlane texture
+        bridge.GetVideoFrame(transform.Find("DroneGimbal/DroneCamera/droneViewHolder/droneVideoFeed").GetComponent<MeshRenderer>().material);
     }
 
     public bool IsCalibrated { get { return isCalibrated; } }
