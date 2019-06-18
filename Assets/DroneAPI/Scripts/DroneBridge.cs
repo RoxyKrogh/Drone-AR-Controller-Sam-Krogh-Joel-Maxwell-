@@ -29,11 +29,11 @@ public class DroneBridge : MonoBehaviour
     /// </summary>
     public class DroneVector
     {
+        private double[] xyz;
         public DroneVector(params double[] xyz)
         {
             this.xyz = xyz;
         }
-        private double[] xyz;
         public double Latitude { get { return xyz[0]; } set { xyz[0] = value; } }
         public double Longitude { get { return xyz[1]; } set { xyz[1] = value; } }
         public double Altitude { get { return xyz[2]; } set { xyz[2] = value; } } // phone has bearing instead of altitude

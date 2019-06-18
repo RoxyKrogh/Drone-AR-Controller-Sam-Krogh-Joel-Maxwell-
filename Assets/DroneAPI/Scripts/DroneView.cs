@@ -13,6 +13,8 @@ public class DroneView : MonoBehaviour
     
     private Vector3 positionOrigin = Vector3.zero;
     private DroneBridge.DroneVector gpsOrigin = new DroneBridge.DroneVector(0,0,0);
+    private float headingOffset;
+    private float yawOrigin;
     private bool isCalibrated = false;
 
     public Transform debugTargetObj;
@@ -50,7 +52,7 @@ public class DroneView : MonoBehaviour
             Vector3 moveTo = Vector3.Lerp(transform.localPosition, targetPosition, locationInterpolation);
             transform.localPosition = moveTo;
 
-            transform.localRotation = Quaternion.AngleAxis(bridge.Yaw, Vector3.up);
+            transform.localRotation = Quaternion.AngleAxis(bridge.Yaw - headingOffset, Vector3.up);
         }
         // match viewPlane to camera projection
         var camera = gimbal.GetComponentInChildren<Camera>();
@@ -128,12 +130,21 @@ public class DroneView : MonoBehaviour
         return global2parent.MultiplyVector(globalVector);
     }
 
+    public Vector3 Rotation2LocalSpace(Vector3 euler)
+    {
+        Matrix4x4 global2parent = transform.parent != null ? transform.parent.worldToLocalMatrix : Matrix4x4.identity;
+        return (global2parent.rotation * Quaternion.Euler(euler)).eulerAngles;
+    }
+
     public void CalibrateGPSCenter()
     {
         try
         {
             positionOrigin = Position2LocalSpace(bridge.PhoneView.localPosition);
             gpsOrigin = bridge.DroneLocation;
+
+            headingOffset = bridge.PhoneHeading - Rotation2LocalSpace(bridge.PhoneView.eulerAngles).y;
+
             //gpsOrigin.Latitude = System.Math.Round(gpsOrigin.Latitude, 9);
             //gpsOrigin.Longitude = System.Math.Round(gpsOrigin.Longitude, 9);
             positionOrigin.y = 0f;
